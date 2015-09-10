@@ -7,11 +7,11 @@ File Description: Defines common style elements applied throughout the site.
 */
 
 * {
-  margin: 0px;
-  padding: 0px;
+  margin: 0px;  padding: 0px;  border: 0px;
 }
 
 body {
+  background-image: url(../img/image11.png);
   font-family: 'Source Sans Pro', Verdana, Arial, sans-serif;
   font-size: 14px;
   color: #211e1a;
@@ -31,15 +31,12 @@ footer {
 
 ul {
   list-style: none;
+  padding-left: 0px;
 }
 
-a:link, a:visited {
-  color: inherit;
+a {
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
+  color: inherit;
 }
 
 #contents_wrapper {
@@ -53,6 +50,7 @@ a:hover {
   font-family: Helvetica;
   font-weight: 700;
   font-size: 20px;
+  color: #8b3d3d;
 }
 
 #author {
@@ -67,26 +65,64 @@ a:hover {
   margin-right: auto;
 }
 
-#page_contents {
-  height: 300px;
+main {
+  min-height: 500px;
   padding: 10px;
 }
 
 nav {
-  float: left;
-  width: 120px;
-  padding: 5px;
+  margin-bottom: 20px;
 }
 
-.nav_entry {
-  color: #444444;
-  margin-bottom: 2px;
+/* Top-level menu */
+nav ul {
+  display: inline-block;
+  background-color: FloralWhite;
+  border-radius: 6px;
+}
+
+nav ul li {
+  position: relative;
+  float: left;  
+}
+
+nav ul li:hover {
+  color: #5cb85c;
+}
+
+nav ul li a {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: block;
+}
+
+/* Second-level menu - initially hidden */
+nav ul ul {
+  position: absolute;  /* This is necessary to prevent content being pushed down when menu is unfolded. */
+  display: none;
+  padding-bottom: 10px;
+  left: 0px;
+}
+
+nav ul ul li {
+  float: none;
+  color: #211e1a;
+}
+
+nav ul ul li a {
+  width: 100px;
+}
+
+nav ul li:hover > ul {
+  display: block;  /* Shows the submenu when hovered. */
+}
+
+nav ul ul li:hover {
+  background-color: FloralWhite;
 }
 
 #article {
-  width: 790px;
   padding: 5px;
-  margin-left: 130px;
 }
 
 #article_title {
