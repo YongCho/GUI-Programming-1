@@ -18,7 +18,9 @@ body {
 }
 
 header {
-  padding: 20px;
+  padding-left: 20px;
+  padding-top: 20px;
+  padding-bottom: 10px;
   height: auto;
 }
 
@@ -26,6 +28,14 @@ footer {
   padding: 10px;
   text-align: right;
   clear: both;
+}
+
+body p, body li {
+  line-height: 140%;
+}
+
+body img {
+  margin-bottom: 5px;
 }
 
 ul {
@@ -60,15 +70,14 @@ a {
 .horzRule {
   background-color: #5cb85c;
   height: 2px;
-  width: 98%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 14px;
+  margin-right: 14px;
   margin-bottom: 20px;
 }
 
-main {
-  min-height: 500px;
-  padding: 10px;
+nav {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* Top-level menu */
@@ -115,7 +124,12 @@ nav ul li:hover > ul {
   display: block;  /* Shows the submenu when hovered. */
 }
 
-#article {
+main {
+  min-height: 500px;
+  padding: 10px;
+}
+
+article {
   padding: 10px;
 }
 
