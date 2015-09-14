@@ -18,9 +18,7 @@ body {
 }
 
 header {
-  padding-left: 20px;
-  padding-top: 20px;
-  padding-bottom: 10px;
+  padding: 20px;
   height: auto;
 }
 
@@ -30,12 +28,8 @@ footer {
   clear: both;
 }
 
-body p, body li {
-  line-height: 140%;
-}
-
-body img {
-  margin-bottom: 5px;
+img {
+  margin: 5px;
 }
 
 ul {
@@ -63,10 +57,6 @@ a {
   color: #8b3d3d;
 }
 
-#author {
-  font-size: 13px;
-}
-
 .horzRule {
   background-color: #5cb85c;
   height: 2px;
@@ -80,30 +70,39 @@ nav {
   padding-right: 10px;
 }
 
+
 /* Top-level menu */
+
 nav ul {
-  color: #5c5cb8;  
+  color: #5c5cb8;    
 }
 
 nav > ul {
   display: inline-block;    
   padding: 4px;
   width: 99%;
+  margin-bottom: 4px;
 }
 
 nav > ul > li {
   float: left;
-  font-size: 16px;
   margin-left: 10px;
   margin-right: 10px;
   display: block;  
+}
+
+nav > ul > li > a {
+  font-size: 16px;  
+  padding-bottom: 5px;
 }
 
 nav ul li:hover {
   color: #5cb85c;  
 }
 
-/* Second-level menu - initially hidden */
+
+/* Second-level menu - shows on hover */
+
 nav ul ul {
   position: absolute;  /* This is necessary to prevent content being pushed down when menu is unfolded. */
   display: none;
@@ -112,17 +111,22 @@ nav ul ul {
   border-color: #5cb85c;
   border-radius: 4px;  
   padding: 6px;
+  margin-top: 5px;
   background-color: #fcfdfd;
 }
 
 nav ul ul li {
   float: none;  
   font-size: 14px;
+  line-height: 130%;
 }
 
 nav ul li:hover > ul {
   display: block;  /* Shows the submenu when hovered. */
 }
+
+
+/* Content area */
 
 main {
   min-height: 500px;
@@ -133,9 +137,29 @@ article {
   padding: 10px;
 }
 
+article p {
+  line-height: 140%;
+  margin-bottom: 30px;
+}
+
+article a {
+  color: #5c5cb8;   
+}
+
+article a:hover {
+  text-decoration: underline;
+}
+
 h1 {
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin-bottom: 28px;
+}
+
+h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 15px;
 }
