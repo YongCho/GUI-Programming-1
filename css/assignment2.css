@@ -1,0 +1,15 @@
+/*
+Author: Yong Cho
+Email: Yong_Cho@student.uml.edu
+Created: 9/14/2015
+File Description: Styles for the elements specific to assignment2.html.
+*/
+
+/* Image that links to the assignment 2 index page. */
+#indexPageImg {
+  margin-top: 20px;
+  border-style: solid;
+  border-color: #5c5cb8;
+  border-width: 1px;
+  width: 300px;
+}

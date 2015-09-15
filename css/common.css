@@ -1,20 +1,24 @@
 /*
-91.461 Assignment: Creating Your First Web Page
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
 Created: 9/5/2015
 File Description: Defines common style elements applied throughout the site.
 */
 
-* {
-  margin: 0px;  padding: 0px;  border: 0px;   
-}
-
 body {
   background-image: url(../img/image11.png);
   font-family: 'Source Sans Pro', Verdana, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #211e1a;
+}
+
+/* Limits the width of the contents area so it does not span the entire screen. */
+#contents_wrapper {
+  background-color: FloralWhite;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 2px 16px grey;  
 }
 
 header {
@@ -26,28 +30,6 @@ footer {
   padding: 10px;
   text-align: right;
   clear: both;
-}
-
-img {
-  margin: 5px;
-}
-
-ul {
-  list-style: none;
-  padding-left: 0px;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-#contents_wrapper {
-  background-color: FloralWhite;
-  max-width: 950px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0px 2px 16px grey;  
 }
 
 #title {
@@ -65,16 +47,15 @@ a {
   margin-bottom: 20px;
 }
 
+/* Top-level menu */
+
 nav {
   padding-left: 10px;
   padding-right: 10px;
 }
 
-
-/* Top-level menu */
-
 nav ul {
-  color: #5c5cb8;    
+  color: #5c5cb8; 
 }
 
 nav > ul {
@@ -162,4 +143,18 @@ h2 {
   font-size: 18px;
   font-weight: 500;
   margin-bottom: 15px;
+}
+
+img {
+  margin: 5px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
