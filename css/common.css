@@ -12,7 +12,23 @@ body {
   color: #211e1a;
 }
 
-/* Limits the width of the contents area so it does not span the entire screen. */
+/* Some generic styling */
+
+img {
+  margin: 5px;
+}
+
+ul {
+  list-style: none;  /* Remove the bullets. */
+}
+
+a {
+  text-decoration: none;  /* Don't need the default underline. */
+  color: inherit;         /* No default blue/red/purble combo either. */
+}
+
+/* Limits the width of the contents area and centers it horizontally 
+so it does not span the entire screen. */
 #contents_wrapper {
   background-color: FloralWhite;
   max-width: 950px;
@@ -23,15 +39,14 @@ body {
 
 header {
   padding: 20px;
-  height: auto;
 }
 
 footer {
   padding: 10px;
   text-align: right;
-  clear: both;
 }
 
+/* Site title */
 #title {
   font-family: Helvetica, Arial, sans-serif;
   font-weight: 700;
@@ -42,10 +57,11 @@ footer {
 .horzRule {
   background-color: #5cb85c;
   height: 2px;
-  margin-left: 14px;
-  margin-right: 14px;
+  margin-left: 5px;
+  margin-right: 5px;
   margin-bottom: 20px;
 }
+
 
 /* Top-level menu */
 
@@ -81,12 +97,16 @@ nav ul li:hover {
   color: #5cb85c;  
 }
 
+nav ul li:hover > ul {
+  display: block;  /* This makes the second-level menus to show on hover. */
+}
 
-/* Second-level menu - shows on hover */
+
+/* Second-level menu - shows only on hover */
 
 nav ul ul {
   position: absolute;  /* This is necessary to prevent content being pushed down when menu is unfolded. */
-  display: none;
+  display: none;  /* Hidden until hover */
   border-style: solid;
   border-width: 1px;
   border-color: #5cb85c;
@@ -100,10 +120,6 @@ nav ul ul li {
   float: none;  
   font-size: 14px;
   line-height: 130%;
-}
-
-nav ul li:hover > ul {
-  display: block;  /* Shows the submenu when hovered. */
 }
 
 
@@ -143,18 +159,4 @@ h2 {
   font-size: 18px;
   font-weight: 500;
   margin-bottom: 15px;
-}
-
-img {
-  margin: 5px;
-}
-
-ul {
-  list-style: none;
-  padding-left: 0px;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
 }
