@@ -37,8 +37,7 @@ nav                     { padding-left: 10px;
                           padding-right: 10px; }
 nav > ul                { display: inline-block; 
                           padding: 4px;
-                          width: 99%;
-                          margin-bottom: 4px; }
+                          width: 99%; }
 nav > ul > li           { font-size: 16px;
                           float: left;
                           margin-left: 10px;
