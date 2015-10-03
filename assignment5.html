@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!--
-91.461 Assignment: 
+91.461 Assignment: Formatting Dynamic Text
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
 Created: 9/8/2015
@@ -15,6 +15,55 @@ Page Description: Assignment 5 archive
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/common.css">
+  <link rel="stylesheet" type="text/css" href="css/assignment5.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  
+  <!-- Load the JSON file containing the page contents and output it to HTML. -->
+  <script>
+    var jsonPath = "json/shooting_an_elephant.json";
+    var jsonObj;
+    var error = false;
+    
+    /* Download the JSON file. Async is turned off because the following scripts depend on
+       the file being completely downloaded. */
+    jQuery.ajax({
+      url: jsonPath,
+      dataType: "json",
+      async: false,
+      success: function(data) {
+        jsonObj = data;
+      }
+    })
+    .fail(function() { error = true; });
+    
+    /* This inserts the dynamic html part to the original html. */
+    jQuery(document).ready(function() {
+      $("#jsonExtract").html(jsonToHtml(jsonObj));
+    });
+    
+    /* Converts the json object to an html string. */
+    function jsonToHtml(jsonData) {
+      var strHtml = "";
+      if (error) {
+        strHtml += "<p class='error'>Error occurred while retrieving json object (" + jsonPath + ").</p>";
+      } else {
+        strHtml += "<h1 class='title'>" + jsonData.title + "</h1>";
+        strHtml += "<div class='headerBlock'>";
+        strHtml += "<h2 class='author'>Author: " + jsonData.author + "</h2>";
+        strHtml += "<h2 class='genre'>Genre: " + jsonData.genre + "</h2>";
+        strHtml += "<h2 class='published_in'>Published in: " + jsonData.published_in + "</h2>";
+        strHtml += "<h2 class='published_year'>Year: " + jsonData.published_year + "</h2>";
+        strHtml += "<h2 class='published_country'>Country: " + jsonData.published_country + "</h2>";
+        strHtml += "<h2 class='text_source'>Text Source: " + jsonData.text_source + "</h2>";
+        strHtml += "</div>";
+        for (var paragraph = 0; paragraph < jsonData.paragraphs.length; ++paragraph) {
+          strHtml += "<p>" + jsonData.paragraphs[paragraph] + "</p>";
+        }
+      }
+      
+      return strHtml;
+    }
+  </script>
 </head>
 
 <body>
@@ -46,11 +95,13 @@ Page Description: Assignment 5 archive
       <div id="navUnderline"></div>
     </nav>
 
-    <!-- Contents that changes when navigation menu is clicked. Initially contains the site introduction. -->
     <main>
       <article>
         <h1>Assignment 5</h1>
-        <p>This assignment has not been completed.</p>
+        <h2>Formatting Dynamic Text</h2>
+        <p>In this assignment, we download a text saved in a JSON format and render it into HTML using JavaScript and jQuery.</p>
+        <p><a href="json/shooting_an_elephant.json">&rarr; Source JSON File</a></p>
+        <div id="jsonExtract"></div>
       </article>
     </main>
 
