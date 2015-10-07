@@ -5,8 +5,12 @@ Created: 9/5/2015
 File Description: Defines common style elements applied throughout the site.
 */
 
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro');
+@import url('http://fonts.googleapis.com/css?family=Roboto');
+@import url('http://fonts.googleapis.com/css?family=Nunito');
+
 body      { background-image: url(../img/image11.png); 
-            font-family: 'Source Sans Pro', Verdana, Arial, sans-serif; }
+            font-family: 'Roboto', 'Source Sans Pro', Verdana, Arial, sans-serif; }
 
 /* Some generic styling for all sections */
 ul        { list-style: none; }     /* Remove the bullets. */
@@ -74,7 +78,7 @@ article                 { padding: 10px;
                           color: #211e1a;
                           font-size: 16px; }
 article p               { line-height: 140%; margin-bottom: 12px; }
-article h1              { font-family: Helvetica, Arial, sans-serif;
+article h1              { font-family: 'Nunito', sans-serif;
                           font-size: 28px;
                           font-weight: 500;
                           margin-bottom: 28px; }
