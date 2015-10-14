@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!--
-91.461 Assignment: 
+91.461 Assignment 6: Creating an Interactive Dynamic Table
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
 Created: 9/8/2015
@@ -14,6 +14,9 @@ Page Description: Assignment 6 archive
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/common.css">
+  <link rel="stylesheet" type="text/css" href="css/assignment6.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="js/multTable.js"></script>
 </head>
 
 <body>
@@ -24,13 +27,13 @@ Page Description: Assignment 6 archive
     <header>
       <p id="siteTitle">91.461 GUI Programming 1 Assignments</p>
     </header>
-      
+
     <!-- Main navigation menu -->
     <nav>
       <ul>
         <li><a href="index.html">About</a></li>
         <li><a href="#">Assignments</a>
-          <ul>            
+          <ul>
             <li><a href="assignment2.html">Assignment 2</a></li>
             <li><a href="assignment3.html">Assignment 3</a></li>
             <li><a href="assignment4.html">Assignment 4</a></li>
@@ -39,17 +42,42 @@ Page Description: Assignment 6 archive
             <li><a href="assignment7.html">Assignment 7</a></li>
             <li><a href="assignment8.html">Assignment 8</a></li>
           </ul>
-        </li>          
+        </li>
       </ul>
       <!-- A horizontal line below the menu -->
       <div id="navUnderline"></div>
     </nav>
 
-    <!-- Contents that changes when navigation menu is clicked. Initially contains the site introduction. -->
     <main>
       <article>
         <h1>Assignment 6</h1>
-        <p>This assignment has not been completed.</p>
+        <h2>Creating an Interactive Dynamic Table</h2>
+
+        <div id="debugMsg"></div>
+
+        <form>
+          <div>
+            <label>Range 1</label>
+            <input type="text" id="rowStart" />
+            <label>-</label>
+            <input type="text" id="rowEnd" />
+            <span id="rowErrorMessage" class="errorMessage"></span>
+          </div>
+          <div>
+            <label>Range 2</label>
+            <input type="text" id="columnStart" />
+            <label>-</label>
+            <input type="text" id="columnEnd" />
+            <span id="columnErrorMessage" class="errorMessage"></span>
+          </div>
+        </form>
+
+        <div class="buttonBox">
+          <button onclick="submit()">Generate Table</button>
+        </div>
+
+        <!-- This is the container for the multiplication table. -->
+        <table id="mult_table"></table>
       </article>
     </main>
 
