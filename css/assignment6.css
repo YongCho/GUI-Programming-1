@@ -12,7 +12,7 @@ article {overflow-x: auto;}
 
 /* Input form */
 form                 { text-align: center; }
-form div             { padding: 2px; }
+form div             { padding: 2px; margin-bottom: 5px; }
 form label:first-child
                      { margin-right: 10px; }
 input[type="text"]   { width: 50px; border: 1px solid #dcdcdc; font-size: inherit; text-align: right; }
