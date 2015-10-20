@@ -5,6 +5,7 @@ Created: 10/12/2015
 File Description: JavaScript for assignment 6 page.
 */
 
+"use strict";
 var defaultRowStart = 1;
 var defaultRowEnd = 4;
 var defaultColumnStart = 1;
@@ -61,7 +62,7 @@ function validateInput() {
   } else {
     document.getElementById("columnErrorMessage").innerHTML = "";
   }
-
+  
   highlightError(rowStart, "rowStart");
   highlightError(rowEnd, "rowEnd");
   highlightError(columnStart, "columnStart");
@@ -121,7 +122,7 @@ function generateMultTable(rowStart, rowEnd, columnStart, columnEnd) {
     row.insertCell(0).innerHTML = rowValue;
 
     // The other cells in the row
-    columnValue = columnStart;
+    var columnValue = columnStart;
     for (iCol = 1; iCol <= columnCount; ++iCol) {
       row.insertCell(iCol).innerHTML = rowValue * columnValue;
       ++columnValue;

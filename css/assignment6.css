@@ -11,7 +11,7 @@ form div             { padding: 2px; }
 input[type="text"]   { width: 50px; border: 1px solid #dcdcdc; font-size: inherit; text-align: right; }
 /* Input text field when containing invalid value */
 input[type="text"].errorHighlight
-                     { border-color: #ff8080; border-width: 2px; }
+                     { border-color: #ff8080; }
 
 .errorMessage        { color: red; font-size: 14px; }
 .buttonBox           { text-align: center; margin-top: 10px; margin-bottom: 30px; }
