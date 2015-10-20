@@ -106,7 +106,7 @@ function generateMultTable(rowStart, rowEnd, columnStart, columnEnd) {
   row = multTable.insertRow(0);
 
   // The empty top-left cell
-  row.insertCell(0);
+  row.insertCell(0).innerHTML = "&times;";
 
   // Cells in top row
   var cellValue = columnStart;
