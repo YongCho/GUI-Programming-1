@@ -40,7 +40,6 @@ button {
 	background:-o-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
 	background:-ms-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
 	background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9',GradientType=0);
 	background-color:#f9f9f9;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
@@ -62,7 +61,6 @@ button:hover {
 	background:-o-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
 	background:-ms-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
 	background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9',GradientType=0);
 	background-color:#e9e9e9;
 }
 button:active {
