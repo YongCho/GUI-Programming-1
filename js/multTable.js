@@ -24,6 +24,7 @@ function submit() {
 }
 
 // Validate user input - only positive integers are valid for the row and column numbers.
+// Display error messages.
 function validateInput() {
   var rowStart = document.getElementById("rowStart").value;
   var rowEnd = document.getElementById("rowEnd").value;
@@ -62,7 +63,7 @@ function validateInput() {
   } else {
     document.getElementById("columnErrorMessage").innerHTML = "";
   }
-  
+
   highlightError(rowStart, "rowStart");
   highlightError(rowEnd, "rowEnd");
   highlightError(columnStart, "columnStart");

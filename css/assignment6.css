@@ -5,15 +5,29 @@ Created: 10/12/2015
 File Description: Styles for the elements specific to assignment 6 page.
 */
 
+/* Spawns a scroll bar when the user enters a large value and the table needs to expand outside
+   the width of the page. */
+article {overflow-x: auto;}
+
+
 /* Input form */
 form                 { text-align: center; }
 form div             { padding: 2px; }
+form label:first-child
+                     { margin-right: 10px; }
 input[type="text"]   { width: 50px; border: 1px solid #dcdcdc; font-size: inherit; text-align: right; }
 /* Input text field when containing invalid value */
 input[type="text"].errorHighlight
-                     { border-color: #ff8080; }
+                     { border-color: red; background-color: #ff8080; }
 
-.errorMessage        { color: red; font-size: 14px; }
+/* Show the error message to the right side of the input text field. */
+.errorMessage        { margin-left: 10px;
+                       position:absolute;
+                       display: inline-block;
+                       color: red;
+                       font-size: 14px; }
+
+/* Need this to center the button. */
 .buttonBox           { text-align: center; margin-top: 10px; margin-bottom: 30px; }
 
 /* Multiplication table */
@@ -23,10 +37,6 @@ tr                   { height: 30px; }
 tr:first-child       { background-color: orange; font-weight: bold; }
 td                   { min-width: 50px; vertical-align: middle; text-align: center; }
 td:first-child       { background-color: orange; font-weight: bold; }
-
-/* Spawns a scroll bar when the user enters a large value and the table needs to expand outside
-   the width of the page. */
-article {overflow-x: auto;}
 
 
 /* Button style copied from http://www.bestcssbuttongenerator.com/#/28. */
