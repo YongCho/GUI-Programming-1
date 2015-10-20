@@ -18,7 +18,7 @@ form label:first-child
 input[type="text"]   { width: 50px; border: 1px solid #dcdcdc; font-size: inherit; text-align: right; }
 /* Input text field when containing invalid value */
 input[type="text"].errorHighlight
-                     { border-color: red; background-color: #ff8080; }
+                     { background-color: #ff8080; }
 
 /* Show the error message to the right side of the input text field. */
 .errorMessage        { margin-left: 10px;

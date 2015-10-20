@@ -20,7 +20,7 @@ function submit() {
   var columnEnd = document.getElementById("columnEnd").value;
 
   if (validateInput())
-    generateMultTable(rowStart, rowEnd, columnStart, columnEnd);
+    generateMultTable(parseInt(rowStart), parseInt(rowEnd), parseInt(columnStart), parseInt(columnEnd));
 }
 
 // Validate user input - only positive integers are valid for the row and column numbers.
@@ -93,29 +93,46 @@ function clearTable(table) {
   }
 }
 
-// Redraws the table using the given number range.
+// Clears the existing multiplication table and redraws it using the given number range.
 function generateMultTable(rowStart, rowEnd, columnStart, columnEnd) {
   var multTable = document.getElementById("mult_table");
   clearTable(multTable);
 
-  var rowCount = rowEnd - rowStart + 1;
-  var columnCount = columnEnd - columnStart + 1;
+  var rowCount, reverseRow = false;
+  if (rowEnd < rowStart) {
+    reverseRow = true;
+    rowCount = rowStart - rowEnd + 1;
+  } else {
+    rowCount = rowEnd - rowStart + 1;
+  }
+
+  var columnCount, reverseColumn = false;
+  if (columnEnd < columnStart) {
+    reverseColumn = true;
+    columnCount = columnStart - columnEnd + 1;
+  } else {
+    columnCount = columnEnd - columnStart + 1;
+  }
+
   var iRow, iCol, row, cell;
 
   // Top row
   row = multTable.insertRow(0);
 
-  // The empty top-left cell
+  // The top-left cell containing 'X' sign.
   row.insertCell(0).innerHTML = "&times;";
 
+  var rowValue, columnValue;
+
   // Cells in top row
-  var cellValue = columnStart;
+  columnValue = columnStart;
   for (iCol = 1; iCol <= columnCount; ++iCol) {
-    row.insertCell(iCol).innerHTML = cellValue++;
+    row.insertCell(iCol).innerHTML = columnValue;
+    reverseColumn ? --columnValue : ++columnValue;
   }
 
   // Second through last rows
-  var rowValue = rowStart;
+  rowValue = rowStart;
   for (iRow = 1; iRow <= rowCount; ++iRow) {
     row = multTable.insertRow(iRow);
 
@@ -123,13 +140,15 @@ function generateMultTable(rowStart, rowEnd, columnStart, columnEnd) {
     row.insertCell(0).innerHTML = rowValue;
 
     // The other cells in the row
-    var columnValue = columnStart;
+    columnValue = columnStart;
     for (iCol = 1; iCol <= columnCount; ++iCol) {
       row.insertCell(iCol).innerHTML = rowValue * columnValue;
-      ++columnValue;
+      reverseColumn ? --columnValue : ++columnValue;
     }
-    ++rowValue;
+
+    reverseRow ? --rowValue : ++rowValue;
   }
+
 }
 
 // Draws the default table.
