@@ -7,8 +7,7 @@ File Description: Styles for the elements specific to assignment 6 page.
 
 /* Spawns a scroll bar when the user enters a large value and the table needs to expand outside
    the width of the page. */
-article {overflow-x: auto;}
-
+article              { overflow-x: auto; }
 
 /* Input form */
 form                 { text-align: center; }
