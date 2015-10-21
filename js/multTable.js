@@ -23,8 +23,8 @@ function submit() {
     generateMultTable(parseInt(rowStart), parseInt(rowEnd), parseInt(columnStart), parseInt(columnEnd));
 }
 
-// Validate user input - only positive integers are valid for the row and column numbers.
-// Display error messages.
+// Validates user input - only positive integers are valid for the row and column numbers.
+// Displays error messages when invalid input is detected.
 function validateInput() {
   var rowStart = document.getElementById("rowStart").value;
   var rowEnd = document.getElementById("rowEnd").value;
@@ -72,6 +72,7 @@ function validateInput() {
   return errorCount == 0;
 }
 
+// Highlights the input text field containing an invalid user input.
 function highlightError(value, inputFieldId, errorMsgFieldId) {
   if (value == null || value == "" || isNaN(value) || Math.floor(value) != value || value < 1) {
     $(document.getElementById(inputFieldId)).addClass("errorHighlight");
