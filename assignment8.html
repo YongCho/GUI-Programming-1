@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!--
-91.461 Assignment: 
+91.461 Assignment 8: Using the jQuery UI Slider and Tab Widgets
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
 Created: 9/8/2015
@@ -14,6 +14,20 @@ Page Description: Assignment 8 archive
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/common.css">
+  <link rel="stylesheet" type="text/css" href="css/assignment8.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="js/multTableWithTabs.js"></script>
+  <style>
+     #tabs {font-size: 14px;}
+     .ui-widget-header {
+        background:#b9cd6d;
+        border: 1px solid #b9cd6d;
+        color: #FFFFFF;
+        font-weight: bold;
+     }
+  </style>
 </head>
 
 <body>
@@ -24,13 +38,13 @@ Page Description: Assignment 8 archive
     <header>
       <p id="siteTitle">91.461 GUI Programming 1 Assignments</p>
     </header>
-      
+
     <!-- Main navigation menu -->
     <nav>
       <ul>
         <li><a href="index.html">About</a></li>
         <li><a href="#">Assignments</a>
-          <ul>            
+          <ul>
             <li><a href="assignment2.html">Assignment 2</a></li>
             <li><a href="assignment3.html">Assignment 3</a></li>
             <li><a href="assignment4.html">Assignment 4</a></li>
@@ -39,17 +53,51 @@ Page Description: Assignment 8 archive
             <li><a href="assignment7.html">Assignment 7</a></li>
             <li><a href="assignment8.html">Assignment 8</a></li>
           </ul>
-        </li>          
+        </li>
       </ul>
       <!-- A horizontal line below the menu -->
       <div id="navUnderline"></div>
     </nav>
 
-    <!-- Contents that changes when navigation menu is clicked. Initially contains the site introduction. -->
     <main>
       <article>
         <h1>Assignment 8</h1>
-        <p>This assignment has not been completed.</p>
+        <h2>Using the jQuery UI Slider and Tab Widgets</h2>
+
+        <div id="debugMsg">Debug Message</div>
+
+        <!-- Form to receive multiplication range data -->
+        <form id="multTableInput">
+          <div>
+            <label for="rowStart">Row Start</label>
+            <input type="text" id="rowStart" name="rowStart" />
+          </div>
+          <div>
+            <label for="rowEnd">Row End</label>
+            <input type="text" id="rowEnd" name="rowEnd" />
+          </div>
+          <div>
+            <label for="columnStart">Column Start</label>
+            <input type="text" id="columnStart" name="columnStart" />
+          </div>
+          <div>
+            <label for="columnEnd">Column End</label>
+            <input type="text" id="columnEnd" name="columnEnd" />
+          </div>
+        </form>
+        <div class="buttonBox">
+          <button onclick="submit()">Generate Table</button>
+        </div>
+
+        <!-- This is where the tab panel goes. -->
+        <div id="tabs">
+          <!-- Tabs -->
+          <ul class="tabs">
+          </ul>
+          <!-- Tab contents -->
+          <div class="panelContainer"></div>
+        </div>
+
       </article>
     </main>
 
