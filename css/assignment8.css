@@ -1,13 +1,10 @@
 /*
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
-Created: 10/31/2015
+Created: 11/10/2015
 File Description: Styles for the elements specific to assignment 8 page.
 */
 
-/* Spawns a scroll bar when the user enters a large value and the table needs to expand outside
-   the width of the page. */
-article              { overflow-x: auto; }
 
 /* Input form */
 form div             { padding: 2px; margin-bottom: 5px; }
@@ -18,6 +15,21 @@ input[type="text"]   { width: 50px;
 											 font-size: inherit; 
 											 text-align: right; }
 
+/* Sliders */
+.ui-slider-horizontal 
+										 { height: 8px;
+									     width: 150px;
+									     display: inline-block;
+									     position: relative;
+									     top: 9px; 
+									     margin-right: 20px; 
+									     margin-left: 10px; }									    
+.ui-slider .ui-slider-handle 
+									 	 { height: 15px;
+										   width: 5px;
+										   padding-left: 5px; }
+
+
 /* Invalid texts and error messages */
 .error 				       { color: red; }
 span.error           { font-size: 12px; }
@@ -26,18 +38,13 @@ span.error           { font-size: 12px; }
 .buttonBox           { margin-top: 10px; margin-bottom: 30px; margin-left: 10px; }
 
 /* Tab label */
-.tabs                { height: 44px; margin: 0; padding: 0; }
-.tabs li             { display: inline-block; height: 30px; padding: 7px 5px; }
-.tabs li.ui-tabs-active {
-											 background-color: #FE642E; }
 .tabs li div         { display: inline-block;
 										 	 float: left; }
-
-/* Close button */
-.tabs li .ui-icon-close { 
-	margin-left: 10px; 
-	cursor: pointer;
-	display: inline-block; }
+.ui-tabs-panel       { overflow-x: auto; }
+/* Close button for each tab */
+.tabs li .ui-icon-close 
+										 { cursor: pointer;
+											 display: inline-block; }
 
 
 
@@ -45,7 +52,7 @@ span.error           { font-size: 12px; }
 table, td            { border: 1px solid green; }
 tr                   { height: 30px; }
 tr:first-child       { background-color: orange; font-weight: bold; }
-td                   { min-width: 50px; vertical-align: middle; text-align: center; }
+td                   { min-width: 40px; vertical-align: middle; text-align: center; }
 td:first-child       { background-color: orange; font-weight: bold; }
 
 

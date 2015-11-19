@@ -1,8 +1,8 @@
 /*
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
-Created: 10/31/2015
-File Description: JavaScript for assignment 7 page.
+Created: 11/10/2015
+File Description: JavaScript for assignment 8 page.
 */
 
 "use strict";
@@ -19,26 +19,27 @@ function submit() {
 
   if ($("#multTableInput").valid()) {
     var table = generateMultTable(parseInt(rowStart), parseInt(rowEnd), parseInt(columnStart), parseInt(columnEnd));
-    var tabId = addTab(table, createTabLabel(rowStart, rowEnd, columnStart, columnEnd));
-    selectTab(tabId);
+    var tabId = addTab(table, generateTabLabel(rowStart, rowEnd, columnStart, columnEnd));
   }
 }
 
 // Adds a new tab and places the table object in the new tab's contents area.
 function addTab(table, label) {
   var id = "tab-" + nextTabId;
+  var panelId = "tab-panel-" + nextTabId;
 
-  $("#tabs > div.panelContainer").append("<div id=\"" + id + "\"></div>");
-  $("#tabs ul").append("<li><a href=\"#" + id + "\"><div>" + label + "</div></a><img src=\"img/closetab.png\" class=\"ui-icon ui-icon-close\" role=\"presentation\"></li>");
+  $("#tabs > div.panelContainer").append("<div id=\"" + panelId + "\"></div>");
+  $("#tabs ul").append("<li id=\"" + id + "\"><a href=\"#" + panelId + "\"><div>" + label + "</div></a><img src=\"img/closetab.png\" class=\"ui-icon ui-icon-close\" role=\"presentation\"></li>");
   
   $("#tabs").tabs("refresh");
 
-  $("#" + id).empty();
-  $("#" + id).append($(table));
+  $("#" + panelId).empty();
+  $("#" + panelId).append($(table));
 
   ++nextTabId;
+  selectTab(id);
 
-  return id;
+  return panelId;
 }
 
 // Selects a tab by the ID of its contents div.
@@ -47,8 +48,9 @@ function selectTab(tabId) {
   $("#tabs").tabs("option", "active", index);
 }
 
-function createTabLabel(rowStart, rowEnd, columnStart, columnEnd) {
-  return rowStart + "&minus;" + rowEnd + "<br>" + columnStart + "&minus;" + columnEnd;
+// Generates a tab label string with given range.
+function generateTabLabel(rowStart, rowEnd, columnStart, columnEnd) {
+  return rowStart + " &minus; " + rowEnd + "<br>" + columnStart + " &minus; " + columnEnd;
 }
 
 // Removes all cells from a table effectively making the table disappear from the view.
@@ -56,6 +58,32 @@ function clearTable(table) {
   while (table.rows.length) {
     table.deleteRow(0);
   }
+}
+
+// Updates the active tab's table with the current form values.
+function updateTable() {
+  if (!$("#multTableInput").valid()) {
+    return;
+  }
+  if (!$("#tabs > ul > li").size()) {
+    return;
+  }
+
+  var rowStart = parseInt($("#rowStart").val());
+  var rowEnd = parseInt($("#rowEnd").val());
+  var columnStart = parseInt($("#columnStart").val());
+  var columnEnd = parseInt($("#columnEnd").val());
+
+  var table = generateMultTable(rowStart, rowEnd, columnStart, columnEnd);
+  var activeTabIndex = $("#tabs").tabs("option", "active");
+  var tabId = $("#tabs ul li").eq(activeTabIndex).attr("id");  // "tab-1", "tab-2", ...
+  var tabIdNumber = tabId.substr(4);
+  var panelId = "tab-panel-" + tabIdNumber;
+
+  var label = generateTabLabel(rowStart, rowEnd, columnStart, columnEnd);
+  $("#" + tabId + " div").html(label);
+  $("#" + panelId).empty();
+  $("#" + panelId).append(table);
 }
 
 // Creates a table object containing multiplication table using the given number range.
@@ -124,7 +152,8 @@ $(window).load(function() {
   var defaultRowEnd = 4;
   var defaultColumnStart = 1;
   var defaultColumnEnd = 6;
-
+  var minRange = -9;
+  var maxRange = 9;
   
 
   // Custom rule to check for a valid integer
@@ -139,42 +168,42 @@ $(window).load(function() {
         required: true,
         number: true,
         integer: true,
-        range: [-999, 999]
+        range: [minRange, maxRange]
       },
       rowEnd: {
         required: true,
         number: true,
         integer: true,
-        range: [-999, 999]
+        range: [minRange, maxRange]
       },
       columnStart: {
         required: true,
         number: true,
         integer: true,
-        range: [-999, 999]
+        range: [minRange, maxRange]
       },
       columnEnd: {
         required: true,
         number: true,
         integer: true,
-        range: [-999, 999]
+        range: [minRange, maxRange]
       }
     },
     messages: {
       rowStart: {
-        number: "Please enter a number between -999 and 999.",
+        number: "Please enter a number between " + minRange + " and " + maxRange + ".",
         integer: "Please enter a whole number (1, 2, 3, ...)."
       },
       rowEnd: {
-        number: "Please enter a number (1, 2, 3, ...).",
+        number: "Please enter a number between " + minRange + " and " + maxRange + ".",
         integer: "Please enter a whole number (1, 2, 3, ...)."
       },
       columnStart: {
-        number: "Please enter a number (1, 2, 3, ...).",
+        number: "Please enter a number between " + minRange + " and " + maxRange + ".",
         integer: "Please enter a whole number (1, 2, 3, ...)."
       },
       columnEnd: {
-        number: "Please enter a number (1, 2, 3, ...).",
+        number: "Please enter a number between " + minRange + " and " + maxRange + ".",
         integer: "Please enter a whole number (1, 2, 3, ...)."
       }
     },
@@ -186,15 +215,78 @@ $(window).load(function() {
   document.getElementById("columnStart").value = defaultColumnStart;
   document.getElementById("columnEnd").value = defaultColumnEnd;
 
-  
+  // Create sliders.
+  $("#rowStartSlider").slider({
+    value: defaultRowStart,
+    step: 1,
+    min: minRange,
+    max: maxRange,
+    slide: function( event, ui ) {
+             $("#rowStart").val(ui.value);
+             updateTable();
+           }
+  });
+  $("#rowStart").change(function () {
+    var value = this.value;
+    $("#rowStartSlider").slider("value", parseInt(value));
+    updateTable();
+  });
+
+  $("#rowEndSlider").slider({
+    value: defaultRowEnd,
+    step: 1,
+    min: minRange,
+    max: maxRange,
+    slide: function( event, ui ) {
+             $("#rowEnd").val(ui.value);
+             updateTable();
+           }
+  });
+  $("#rowEnd").change(function () {
+    var value = this.value;
+    $("#rowEndSlider").slider("value", parseInt(value));
+    updateTable();
+  });
+
+  $("#columnStartSlider").slider({
+    value: defaultColumnStart,
+    step: 1,
+    min: minRange,
+    max: maxRange,
+    slide: function( event, ui ) {
+             $("#columnStart").val(ui.value);
+             updateTable();
+           }
+  });
+  $("#columnStart").change(function () {
+    var value = this.value;
+    $("#columnStartSlider").slider("value", parseInt(value));
+    updateTable();
+  });
+
+  $("#columnEndSlider").slider({
+    value: defaultColumnEnd,
+    step: 1,
+    min: minRange,
+    max: maxRange,
+    slide: function( event, ui ) {
+             $("#columnEnd").val(ui.value);
+             updateTable();
+           }
+  });
+  $("#columnEnd").change(function () {
+    var value = this.value;
+    $("#columnEndSlider").slider("value", parseInt(value));
+    updateTable();
+  });
+
+
+  // Create tabs.
   $("#tabs").tabs();
 
   // Generate a default table.
   var table = generateMultTable(defaultRowStart, defaultRowEnd, defaultColumnStart, defaultColumnEnd);
-  var tabId = addTab(table, createTabLabel(defaultRowStart, defaultRowEnd, defaultColumnStart, defaultColumnEnd));
-
-  // Select the default tab. Without this, the default table will not be showing initially.
-  selectTab(tabId);
+  addTab(table, generateTabLabel(defaultRowStart, defaultRowEnd, defaultColumnStart, defaultColumnEnd));
 
   $("#tabs").delegate( "img.ui-icon-close", "click", function() {
     var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );

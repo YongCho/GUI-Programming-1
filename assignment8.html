@@ -15,19 +15,11 @@ Page Description: Assignment 8 archive
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/common.css">
   <link rel="stylesheet" type="text/css" href="css/assignment8.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
   <script src="js/multTableWithTabs.js"></script>
-  <style>
-     #tabs {font-size: 14px;}
-     .ui-widget-header {
-        background:#b9cd6d;
-        border: 1px solid #b9cd6d;
-        color: #FFFFFF;
-        font-weight: bold;
-     }
-  </style>
 </head>
 
 <body>
@@ -64,29 +56,33 @@ Page Description: Assignment 8 archive
         <h1>Assignment 8</h1>
         <h2>Using the jQuery UI Slider and Tab Widgets</h2>
 
-        <div id="debugMsg">Debug Message</div>
+        <div id="debugMsg"></div>
 
         <!-- Form to receive multiplication range data -->
         <form id="multTableInput">
           <div>
             <label for="rowStart">Row Start</label>
+            <div id="rowStartSlider" class="slider"></div>
             <input type="text" id="rowStart" name="rowStart" />
           </div>
           <div>
             <label for="rowEnd">Row End</label>
+            <div id="rowEndSlider" class="slider"></div>
             <input type="text" id="rowEnd" name="rowEnd" />
           </div>
           <div>
             <label for="columnStart">Column Start</label>
+            <div id="columnStartSlider" class="slider"></div>
             <input type="text" id="columnStart" name="columnStart" />
           </div>
           <div>
             <label for="columnEnd">Column End</label>
+            <div id="columnEndSlider" class="slider"></div>
             <input type="text" id="columnEnd" name="columnEnd" />
           </div>
         </form>
         <div class="buttonBox">
-          <button onclick="submit()">Generate Table</button>
+          <button onclick="submit()">Start New Tab</button>
         </div>
 
         <!-- This is where the tab panel goes. -->
