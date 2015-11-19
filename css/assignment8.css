@@ -34,8 +34,9 @@ input[type="text"]   { width: 50px;
 .error 				       { color: red; }
 span.error           { font-size: 12px; }
 
-/* Contains buttons */
+/* Buttons */
 .buttonBox           { margin-top: 10px; margin-bottom: 30px; margin-left: 10px; }
+button               { margin-right: 10px; }
 
 /* Tab label */
 .tabs li div         { display: inline-block;
@@ -45,6 +46,9 @@ span.error           { font-size: 12px; }
 .tabs li .ui-icon-close 
 										 { cursor: pointer;
 											 display: inline-block; }
+.tabCheckBox         { position: absolute;
+											 top: 25px;
+											 right: 1px; }
 
 
 

@@ -19,27 +19,44 @@ function submit() {
 
   if ($("#multTableInput").valid()) {
     var table = generateMultTable(parseInt(rowStart), parseInt(rowEnd), parseInt(columnStart), parseInt(columnEnd));
-    var tabId = addTab(table, generateTabLabel(rowStart, rowEnd, columnStart, columnEnd));
+    addTab(table, generateTabLabel(rowStart, rowEnd, columnStart, columnEnd));
   }
 }
 
 // Adds a new tab and places the table object in the new tab's contents area.
 function addTab(table, label) {
-  var id = "tab-" + nextTabId;
+  var tabId = "tab-" + nextTabId;
   var panelId = "tab-panel-" + nextTabId;
 
+  // Create new panel div.
   $("#tabs > div.panelContainer").append("<div id=\"" + panelId + "\"></div>");
-  $("#tabs ul").append("<li id=\"" + id + "\"><a href=\"#" + panelId + "\"><div>" + label + "</div></a><img src=\"img/closetab.png\" class=\"ui-icon ui-icon-close\" role=\"presentation\"></li>");
+
+  // Create li that represents the new tab. Its href is set to the new panel div.
+  $("#tabs ul").append("<li id=\"" + tabId + "\"><a href=\"#" + panelId + "\"><div>" + label + "</div></a><img src=\"img/closetab.png\" class=\"ui-icon ui-icon-close\" role=\"presentation\"><input type=\"checkbox\" class=\"tabCheckBox\"></li>");
   
+  // Let jQuery process the new li.
   $("#tabs").tabs("refresh");
 
+  // Insert the table into the new panel div.
   $("#" + panelId).empty();
   $("#" + panelId).append($(table));
 
   ++nextTabId;
-  selectTab(id);
+  selectTab(tabId);
 
   return panelId;
+}
+
+// Deletes all selected tabs.
+function deleteSelectedTabs() {
+  $("#tabs ul li").each(function() { 
+    var tabId = $(this).attr("id");
+    if ($("#" + tabId + " .tabCheckBox").prop("checked")) {
+      var panelId = $(this).remove().attr("aria-controls");
+      $("#" + panelId).remove();
+      $("#tabs").tabs("refresh");
+    }
+  });
 }
 
 // Selects a tab by the ID of its contents div.
@@ -145,8 +162,7 @@ function generateMultTable(rowStart, rowEnd, columnStart, columnEnd) {
   return multTable;
 }
 
-// Draws the default table.
-// Installs the event handlers.
+// Draws the default table. Initializes jQuery UI elements.
 $(window).load(function() {
   var defaultRowStart = 1;
   var defaultRowEnd = 4;
@@ -215,7 +231,7 @@ $(window).load(function() {
   document.getElementById("columnStart").value = defaultColumnStart;
   document.getElementById("columnEnd").value = defaultColumnEnd;
 
-  // Create sliders.
+  // Slider 1 - starting row value
   $("#rowStartSlider").slider({
     value: defaultRowStart,
     step: 1,
@@ -232,6 +248,7 @@ $(window).load(function() {
     updateTable();
   });
 
+  // Slider 2 - ending row value
   $("#rowEndSlider").slider({
     value: defaultRowEnd,
     step: 1,
@@ -248,6 +265,7 @@ $(window).load(function() {
     updateTable();
   });
 
+  // Slider 3 - starting column value
   $("#columnStartSlider").slider({
     value: defaultColumnStart,
     step: 1,
@@ -264,6 +282,7 @@ $(window).load(function() {
     updateTable();
   });
 
+  // Slider 4 - ending column value
   $("#columnEndSlider").slider({
     value: defaultColumnEnd,
     step: 1,
@@ -281,17 +300,18 @@ $(window).load(function() {
   });
 
 
-  // Create tabs.
+  // Initialize jQuery UI tabs.
   $("#tabs").tabs();
 
   // Generate a default table.
   var table = generateMultTable(defaultRowStart, defaultRowEnd, defaultColumnStart, defaultColumnEnd);
   addTab(table, generateTabLabel(defaultRowStart, defaultRowEnd, defaultColumnStart, defaultColumnEnd));
 
+  // Add functionality to the x icon for each tab.
   $("#tabs").delegate( "img.ui-icon-close", "click", function() {
-    var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
-    $( "#" + panelId ).remove();
-    $("#tabs").tabs( "refresh" );
+    var panelId = $(this).closest("li").remove().attr("aria-controls");
+    $("#" + panelId).remove();
+    $("#tabs").tabs("refresh");
   });
 
 });
