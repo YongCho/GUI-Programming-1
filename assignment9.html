@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
 <!--
-91.461 Assignment 7: Creating an Interactive Dynamic Table
+91.461 Assignment 9: Implementing a Bit of Scrabble with Drag-and-Drop
 Author: Yong Cho
 Email: Yong_Cho@student.uml.edu
-Created: 9/8/2015
-Page Description: Assignment 7 archive
+Created: 12/3/2015
+Page Description: Assignment 9 archive
 -->
 
 <html>
@@ -14,10 +14,10 @@ Page Description: Assignment 7 archive
   <meta charset="utf-8" />
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/common.css">
-  <link rel="stylesheet" type="text/css" href="css/assignment7.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/assignment8.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
-  <script src="js/multTableWithJQueryValidation.js"></script>
 </head>
 
 <body>
@@ -52,36 +52,13 @@ Page Description: Assignment 7 archive
 
     <main>
       <article>
-        <h1>Assignment 7</h1>
-        <h2>Creating an Interactive Dynamic Table</h2>
+        <h1>Assignment 9</h1>
+        <h2>Implementing a Bit of Scrabble with Drag-and-Drop</h2>
 
         <div id="debugMsg"></div>
 
-        <!-- Form to receive multiplication range data -->
-        <form id="multTableInput">
-          <div>
-            <label for="rowStart">Row Start</label>
-            <input type="text" id="rowStart" name="rowStart" />
-          </div>
-          <div>
-            <label for="rowEnd">Row End</label>
-            <input type="text" id="rowEnd" name="rowEnd" />
-          </div>
-          <div>
-            <label for="columnStart">Column Start</label>
-            <input type="text" id="columnStart" name="columnStart" />
-          </div>
-          <div>
-            <label for="columnEnd">Column End</label>
-            <input type="text" id="columnEnd" name="columnEnd" />
-          </div>
-        </form>
-        <div class="buttonBox">
-          <button onclick="submit()">Generate Table</button>
-        </div>
+        
 
-        <!-- This is the container for the multiplication table. -->
-        <table id="multTable"></table>
       </article>
     </main>
 
