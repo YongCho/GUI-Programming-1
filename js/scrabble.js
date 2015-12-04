@@ -123,15 +123,48 @@ function resetTiles() {
   // Make the tile images draggable.
   $(".letterTile").draggable({
     revertDuration: 200,  // msec
-
-    drag: function(event, ui) {
+    start: function(event, ui) {
       // Clear any error message when dragging starts.
       $("#errorMsg").empty();
 
-      // Revert it back to the original position any time it was dropped at an invalid position. 
-      // Note that this property may get modified by droppable to force reverting when the tile is dropped at a 
-      // slot that already has another tile on it. Therefore, we're resetting it every time the tile is dragged.
-      $(this).draggable("option", "revert", "invalid");
+      // Tile should be on top of everything else when being dragged.
+      $(this).css("z-index", "100");
+
+      // This function is called when the tile is released from dragging. In case the tile was
+      // not dropped on the board, it takes different actions depending on where the tile
+      // originally came from. If the tile came from the rack, it reverts it back to the rack.
+      // If the tile came from the board, it again moves it to the rack because the user probably
+      // wanted to take it out of the board. However, in this case, the job is done manually because 
+      // 'auto reverting' would put it back to the board.
+      $(this).draggable("option", "revert", function(accepted) {
+        var iRow, iCol;
+
+        if (accepted === false) {
+          // Iterate the board slots and see if the tile came from any of the slots.
+          for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+            for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+              if (boardSlots[iRow][iCol].tileId === $(this).attr("id")) {
+                // The tile came from the board and dropped outside the board. Put it back in the rack.
+                delete boardSlots[iRow][iCol].tileId;
+                delete boardSlots[iRow][iCol].letter;
+                $("#letterRack").append($(this));
+                $(this).css({"position": "relative", "top": "0px", "left": "0px" });
+
+                // We're manually putting it in the rack. Don't revert it back to the board.
+                return false;
+              }
+            }
+          }
+
+          // If we got here, the tile came from the rack. Revert it back to the rack.
+          return true;
+        }
+      });
+    },
+    stop: function() {
+      // Once finished dragging, lower the z-index so that the tile is above the
+      // board iamge and below other tiles that are being dragged.
+      $(this).css("z-index", "99");
     }
   });
 }
