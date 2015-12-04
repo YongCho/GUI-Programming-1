@@ -58,7 +58,42 @@ Page Description: Assignment 9 archive
 
         <div id="debugMsg"></div>
 
-        
+        <!-- Score tracker. -->
+        <div id="scoreBoard">
+          <div>
+            <div class="label">Word:</div>
+            <div id="word"></div>
+          </div>
+          <div>
+            <div class="label">Score:</div>
+            <div id="score"></div>
+          </div>
+        </div>
+
+        <!-- Scrabble board. Each image is a drop target. Images are downloaded from 
+        https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/ImplementingScrabble-v01.jsp -->
+        <div id="board">
+          <img src="img/scrabble/Scrabble_BlankSquare_81x87.jpg" class="boardTile" />
+          <img src="img/scrabble/Scrabble_DoubleWordScore_81x87.jpg" class="boardTile doubleWord" />
+          <img src="img/scrabble/Scrabble_BlankSquare_81x87.jpg" class="boardTile" />
+          <img src="img/scrabble/Scrabble_BlankSquare_81x87.jpg" class="boardTile" />
+          <img src="img/scrabble/Scrabble_BlankSquare_81x87.jpg" class="boardTile" />
+          <img src="img/scrabble/Scrabble_DoubleWordScore_81x87.jpg" class="boardTile doubleWord" />
+          <img src="img/scrabble/Scrabble_BlankSquare_81x87.jpg" class="boardTile" />
+        </div>
+
+        <!-- Buttons -->
+        <div class="buttonBox">
+          <button onclick="resetBoard()">Reset Board</button>
+        </div>
+
+        <!-- Error Message container -->
+        <div id="errorMsg">You can't do that!</div>
+
+        <!-- Letters rack. Letter images are downloaded from
+        https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Tiles.html. 
+        The rack is initially empty. Random letters are to be displayed by JavaScript when the page loads. -->
+        <div id="letterRack"></div>
 
       </article>
     </main>
