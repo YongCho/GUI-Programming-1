@@ -50,29 +50,27 @@ function getRandomInt(min, max) {
 // ex) ["A", "K", "Z", ...]
 function getFromDeck(n) {
   var hand = [];
-  var availableLetters = [];
+  var allTiles = [];
 
-  // Find out which letters are still available to hand out.
+  // Make an array of all remaining tiles for a random selection.
   for (var key in ScrabbleTiles) {
     if (ScrabbleTiles.hasOwnProperty(key)) {
       var remaining = ScrabbleTiles[key]["number-remaining"];
-      if (remaining) {
-        availableLetters.push(key);
+      for (var i = 0; i < remaining; ++i) {
+        allTiles.push(key);
       }
     }
   }
 
   // Try to pick out n letter tiles. If we don't have n tiles, then hand out whatever we have.
   for (var i = 0; i < n; ++i) {
-    if (availableLetters.length) {
-      var randomIndex = getRandomInt(0, Object.keys(availableLetters).length - 1);
-      var randomLetter = availableLetters[randomIndex];
+    if (allTiles.length) {
+      var randomIndex = getRandomInt(0, Object.keys(allTiles).length - 1);
+      var randomLetter = allTiles[randomIndex];
       hand.push(randomLetter);
-      if (--ScrabbleTiles[randomLetter]["number-remaining"] == 0) {
-        // Handed out the last tile for this letter. Remove the letter from the pool of available letters.
-        availableLetters.splice(randomIndex, 1);
-      }
-      console.log("Handing out " + randomLetter + ". Remaining: " + ScrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + availableLetters + ".");
+      --ScrabbleTiles[randomLetter]["number-remaining"];
+      allTiles.splice(randomIndex, 1);
+      console.log("Handing out " + randomLetter + ". Remaining: " + ScrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
     }
   }
 
