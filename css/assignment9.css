@@ -18,8 +18,8 @@ File Description: Styles for the elements specific to assignment 9 page.
 
 .buttonBox         { width: 150px; margin: auto; margin-bottom: 10px; }
 
-/* Error message container. */
-#errorMsg          { color: red; text-align: center; margin-bottom: 30px; }
+/* Error message container. Give it a fixed height so having no error message won't shift the page. */
+#errorMsg          { color: red; text-align: center; margin-bottom: 30px; height: 20px; }
 
 #letterRack        { width: 620px; margin-left: auto; margin-right: auto; }
 

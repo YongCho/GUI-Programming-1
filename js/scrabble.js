@@ -86,14 +86,24 @@ function getFromDeck(n) {
 }
 
 function resetTiles() {
-  // Remove all letter tiles. (Removing all elements of a class -
+  var iRow, iCol;
+
+  // Remove all letter tiles out on the page. (Removing all elements of a class -
   // http://stackoverflow.com/questions/10842471/remove-all-elements-of-a-certain-class-with-javascript)
   var letterTiles = document.getElementsByClassName("letterTile");
   while (letterTiles[0]) {
     letterTiles[0].parentNode.removeChild(letterTiles[0]);
   }
 
-  // Reset the deck.
+  // Reset the slot data structure.
+  for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+    for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+      delete boardSlots[iRow][iCol].tileId;
+      delete boardSlots[iRow][iCol].letter;
+    }
+  }
+
+  // Reset the deck data structure.
   for (var key in scrabbleTiles) {
     if (scrabbleTiles.hasOwnProperty(key)) {
       scrabbleTiles[key]["number-remaining"] = scrabbleTiles[key]["original-distribution"];
@@ -104,60 +114,37 @@ function resetTiles() {
   var hand = getFromDeck(7);
   for (var i = 0; i < hand.length; ++i) {
     var key = hand[i];
-    var tileImageId = keyToTileImageId(key);
+    var tileImageId = generateTileId();
 
     // Add tile image.
-    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" />");
-
-    // Make the tile image draggable.
-    $("#" + tileImageId).draggable();
+    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" letter=\"" + key + "\" />");
   }
+
+  // Make the tile images draggable.
+  $(".letterTile").draggable({
+    revertDuration: 200,  // msec
+
+    drag: function(event, ui) {
+      // Clear any error message when dragging starts.
+      $("#errorMsg").empty();
+
+      // Revert it back to the original position any time it was dropped at an invalid position. 
+      // Note that this property may get modified by droppable to force reverting when the tile is dropped at a 
+      // slot that already has another tile on it. Therefore, we're resetting it every time the tile is dragged.
+      $(this).draggable("option", "revert", "invalid");
+    }
+  });
 }
 
-
-// Converts a letter c to the tile image ID representing that letter.
-// ex) "A" -> "letterTileA"
-function keyToTileImageId(letter) {
-  var prefix = "letterTile";
+// Generates a unique string to be used as a tile ID.
+function generateTileId() {
   var id;
-  
-  if (letter == "_") {
-    id = prefix + "Blank";
-  } else {
-    id = prefix + letter;
-  }
+
+  generateTileId.id = ++generateTileId.id || 1;
+  id = "tile" + generateTileId.id.toString();
+  console.log("Tile ID = " + id);
 
   return id;
-}
-
-// Converts a letter tile image ID to a letter key.
-// ex) "letterTileA" -> "A"
-function tileImageIdToKey(tileId) {
-  var key;
-
-  if (tileId == "letterTileBlank") {
-    key = "_";
-  } else {
-    key = tileId.substring(10, 11);
-  }
-  
-  return key;
-}
-
-// Converts an integer to a letter for the scrabbleTiles key.
-// N must be [0, 26], otherwise the function's behavior is undefined.
-// ex) 0 -> "A"
-//     25 -> "Z"
-//     26 -> "_"
-function intToKey(n) {
-  var c;
-  if (n == 26) {
-    c = "_";
-  } else {
-    c = String.fromCharCode(n + "A".charCodeAt(0));
-  }
-
-  return c;
 }
 
 $(window).load(function() {
@@ -167,31 +154,63 @@ $(window).load(function() {
   for (row = 0; row < Object.keys(boardSlots).length; ++row) {
     for (col = 0; col < Object.keys(boardSlots[row]).length; ++col) {
       // Add tile image.
-      $("#board").append("<img src=\"" + boardSlots[row][col].image + "\" class=\"boardImage\" />");
+      $("#board").append("<img src=\"" + boardSlots[row][col].image + "\" class=\"boardImage\" row=\"" + row + "\" col=\"" + col + "\" />");
     }
   }
 
   // Make the board images droppable.
   $(".boardImage").droppable({
+    accept: ".letterTile",
     drop: function(event, ui) {
-      var letter;
+      var row, col, letter, tileId, iRow, iCol;
+
+      console.log("drop");
+
+      row = $(this).attr("row");
+      col = $(this).attr("col");
       
-      // Check if a letter is already on this slot.
+      // Check if a tile is already on this slot.
+      if (typeof(boardSlots[row][col].tileId) === "undefined") {
+        letter = ui.draggable.attr("letter");
+        tileId = ui.draggable.attr("id");
 
+        // Make the dropped tile snap to the board image.
+        $(ui.draggable).css("position", "absolute");
+        $(ui.draggable).css("top", $(this).position().top);
+        $(ui.draggable).css("left", $(this).position().left);
+        console.log("top: " + $(this).position().top + " left: " + $(this).position().left);
 
+        console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
-      console.log("Dropped " + tileImageIdToKey(ui.draggable.attr("id")));
-      // Make the dropped letter snap to the board image.
-      $(ui.draggable).css("position", "absolute");
-      $(ui.draggable).css("top", $(this).position().top);
-      $(ui.draggable).css("left", $(this).position().left);
+        // If the tile came from another slot, clear the properties for that slot.
+        for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+          for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+            if (boardSlots[iRow][iCol].tileId === tileId) {
+              delete boardSlots[iRow][iCol].tileId;
+              delete boardSlots[iRow][iCol].letter;
+            }
+          }
+        }
+
+        // Record that this slot has the tile now.
+        boardSlots[row][col].letter = letter;
+        boardSlots[row][col].tileId = tileId;
+      } else {
+        // There is already a tile on the slot. Revert the tile back to where it came from.
+        console.log("Revert");
+        ui.draggable.draggable("option", "revert", true);
+        if (ui.draggable.attr("id") != boardSlots[row][col].tileId) {
+          // In this case, the user brought over a different tile.
+          $("#errorMsg").html("You can't place a letter over another letter.");
+        } 
+        // else, the same tile came back to the slot. 
+        // Maybe the user decided to move out the tile and changed their mind?
+        // Anyway, no warning message is necessary.
+      }
     }
   });
 
   resetTiles();
-
-  $("#word").html("hello");
-  $("#score").html(90);
 });
 
 // Returns a random integer between min (inclusive) and max (inclusive).
