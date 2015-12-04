@@ -147,6 +147,23 @@ function generateTileId() {
   return id;
 }
 
+// Returns a random integer between min (inclusive) and max (inclusive).
+// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Debug function to print the status of the board.
+function printBoard() {
+  var iRow, iCol;
+
+  for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+    for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+      console.log("boardSlots[" + iRow + "][" + iCol + "] letter: " + boardSlots[iRow][iCol].letter + ", tileId: " + boardSlots[iRow][iCol].tileId);
+    }
+  }
+}
+
 $(window).load(function() {
   var row, col;
 
@@ -164,8 +181,6 @@ $(window).load(function() {
     drop: function(event, ui) {
       var row, col, letter, tileId, iRow, iCol;
 
-      console.log("drop");
-
       row = $(this).attr("row");
       col = $(this).attr("col");
       
@@ -178,7 +193,6 @@ $(window).load(function() {
         $(ui.draggable).css("position", "absolute");
         $(ui.draggable).css("top", $(this).position().top);
         $(ui.draggable).css("left", $(this).position().left);
-        console.log("top: " + $(this).position().top + " left: " + $(this).position().left);
 
         console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
@@ -197,7 +211,6 @@ $(window).load(function() {
         boardSlots[row][col].tileId = tileId;
       } else {
         // There is already a tile on the slot. Revert the tile back to where it came from.
-        console.log("Revert");
         ui.draggable.draggable("option", "revert", true);
         if (ui.draggable.attr("id") != boardSlots[row][col].tileId) {
           // In this case, the user brought over a different tile.
@@ -212,9 +225,3 @@ $(window).load(function() {
 
   resetTiles();
 });
-
-// Returns a random integer between min (inclusive) and max (inclusive).
-// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
