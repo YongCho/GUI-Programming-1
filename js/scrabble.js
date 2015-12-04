@@ -8,44 +8,52 @@ File Description: JavaScript for assignment 9 page.
 "use strict";
 
 /* This associative array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp. 
-I added "path" property to it. */
-var ScrabbleTiles = [] ;
-ScrabbleTiles["A"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "path" : "img/scrabble/Scrabble_Tile_A.jpg"  } ;
-ScrabbleTiles["B"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_B.jpg"  } ;
-ScrabbleTiles["C"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_C.jpg"  } ;
-ScrabbleTiles["D"] = { "value" : 2,  "original-distribution" : 4,  "number-remaining" : 4, "path" : "img/scrabble/Scrabble_Tile_D.jpg"  } ;
-ScrabbleTiles["E"] = { "value" : 1,  "original-distribution" : 12, "number-remaining" : 12, "path" : "img/scrabble/Scrabble_Tile_E.jpg"  } ;
-ScrabbleTiles["F"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_F.jpg"  } ;
-ScrabbleTiles["G"] = { "value" : 2,  "original-distribution" : 3,  "number-remaining" : 3, "path" : "img/scrabble/Scrabble_Tile_G.jpg"  } ;
-ScrabbleTiles["H"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_H.jpg"  } ;
-ScrabbleTiles["I"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "path" : "img/scrabble/Scrabble_Tile_I.jpg"  } ;
-ScrabbleTiles["J"] = { "value" : 8,  "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_J.jpg"  } ;
-ScrabbleTiles["K"] = { "value" : 5,  "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_K.jpg"  } ;
-ScrabbleTiles["L"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "path" : "img/scrabble/Scrabble_Tile_L.jpg"  } ;
-ScrabbleTiles["M"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_M.jpg"  } ;
-ScrabbleTiles["N"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "path" : "img/scrabble/Scrabble_Tile_N.jpg"  } ;
-ScrabbleTiles["O"] = { "value" : 1,  "original-distribution" : 8,  "number-remaining" : 8, "path" : "img/scrabble/Scrabble_Tile_O.jpg"  } ;
-ScrabbleTiles["P"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_P.jpg"  } ;
-ScrabbleTiles["Q"] = { "value" : 10, "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_Q.jpg"  } ;
-ScrabbleTiles["R"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "path" : "img/scrabble/Scrabble_Tile_R.jpg"  } ;
-ScrabbleTiles["S"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "path" : "img/scrabble/Scrabble_Tile_S.jpg"  } ;
-ScrabbleTiles["T"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "path" : "img/scrabble/Scrabble_Tile_T.jpg"  } ;
-ScrabbleTiles["U"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "path" : "img/scrabble/Scrabble_Tile_U.jpg"  } ;
-ScrabbleTiles["V"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_V.jpg"  } ;
-ScrabbleTiles["W"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_W.jpg"  } ;
-ScrabbleTiles["X"] = { "value" : 8,  "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_X.jpg"  } ;
-ScrabbleTiles["Y"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_Y.jpg"  } ;
-ScrabbleTiles["Z"] = { "value" : 10, "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_Z.jpg"  } ;
-ScrabbleTiles["_"] = { "value" : 0,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_Blank.jpg"  } ;
+I added "image" property to it. */
+var scrabbleTiles = [] ;
+scrabbleTiles["A"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "image" : "img/scrabble/Scrabble_Tile_A.jpg"  } ;
+scrabbleTiles["B"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_B.jpg"  } ;
+scrabbleTiles["C"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_C.jpg"  } ;
+scrabbleTiles["D"] = { "value" : 2,  "original-distribution" : 4,  "number-remaining" : 4, "image" : "img/scrabble/Scrabble_Tile_D.jpg"  } ;
+scrabbleTiles["E"] = { "value" : 1,  "original-distribution" : 12, "number-remaining" : 12, "image" : "img/scrabble/Scrabble_Tile_E.jpg"  } ;
+scrabbleTiles["F"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_F.jpg"  } ;
+scrabbleTiles["G"] = { "value" : 2,  "original-distribution" : 3,  "number-remaining" : 3, "image" : "img/scrabble/Scrabble_Tile_G.jpg"  } ;
+scrabbleTiles["H"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_H.jpg"  } ;
+scrabbleTiles["I"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "image" : "img/scrabble/Scrabble_Tile_I.jpg"  } ;
+scrabbleTiles["J"] = { "value" : 8,  "original-distribution" : 1,  "number-remaining" : 1, "image" : "img/scrabble/Scrabble_Tile_J.jpg"  } ;
+scrabbleTiles["K"] = { "value" : 5,  "original-distribution" : 1,  "number-remaining" : 1, "image" : "img/scrabble/Scrabble_Tile_K.jpg"  } ;
+scrabbleTiles["L"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "image" : "img/scrabble/Scrabble_Tile_L.jpg"  } ;
+scrabbleTiles["M"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_M.jpg"  } ;
+scrabbleTiles["N"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "image" : "img/scrabble/Scrabble_Tile_N.jpg"  } ;
+scrabbleTiles["O"] = { "value" : 1,  "original-distribution" : 8,  "number-remaining" : 8, "image" : "img/scrabble/Scrabble_Tile_O.jpg"  } ;
+scrabbleTiles["P"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_P.jpg"  } ;
+scrabbleTiles["Q"] = { "value" : 10, "original-distribution" : 1,  "number-remaining" : 1, "image" : "img/scrabble/Scrabble_Tile_Q.jpg"  } ;
+scrabbleTiles["R"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "image" : "img/scrabble/Scrabble_Tile_R.jpg"  } ;
+scrabbleTiles["S"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "image" : "img/scrabble/Scrabble_Tile_S.jpg"  } ;
+scrabbleTiles["T"] = { "value" : 1,  "original-distribution" : 6,  "number-remaining" : 6, "image" : "img/scrabble/Scrabble_Tile_T.jpg"  } ;
+scrabbleTiles["U"] = { "value" : 1,  "original-distribution" : 4,  "number-remaining" : 4, "image" : "img/scrabble/Scrabble_Tile_U.jpg"  } ;
+scrabbleTiles["V"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_V.jpg"  } ;
+scrabbleTiles["W"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_W.jpg"  } ;
+scrabbleTiles["X"] = { "value" : 8,  "original-distribution" : 1,  "number-remaining" : 1, "image" : "img/scrabble/Scrabble_Tile_X.jpg"  } ;
+scrabbleTiles["Y"] = { "value" : 4,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_Y.jpg"  } ;
+scrabbleTiles["Z"] = { "value" : 10, "original-distribution" : 1,  "number-remaining" : 1, "image" : "img/scrabble/Scrabble_Tile_Z.jpg"  } ;
+scrabbleTiles["_"] = { "value" : 0,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_Blank.jpg"  } ;
 
-// Returns a random integer between min (inclusive) and max (inclusive).
-// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+/* Images are downloaded from 
+https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/ImplementingScrabble-v01.jsp. */
+var boardSlots = [];
+boardSlots[0] = [];
+boardSlots[0][0] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
+boardSlots[0][1] = { "letterMultiplier": 1, "wordMultiplier": 2, "image": "img/scrabble/Scrabble_DoubleWordScore_81x87.jpg"};
+boardSlots[0][2] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
+boardSlots[0][3] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
+boardSlots[0][4] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
+boardSlots[0][5] = { "letterMultiplier": 1, "wordMultiplier": 2, "image": "img/scrabble/Scrabble_DoubleWordScore_81x87.jpg"};
+boardSlots[0][6] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
 
-// Hands out n random letter tiles from the deck adjusting the number-remaining properties for the ScrabbleTiles.
-// If there are less remaining tiles than the requested, then returns all remaining tiles.
+
+// Hands out n random letter tiles from the deck adjusting the number-remaining properties for the scrabbleTiles.
+// If there are less remaining tiles than the requested, then returns all remaining tiles. Returns an empty array
+// when no tiles are remaining in deck.
 // Returns the hand as an array of letters.
 // ex) ["A", "K", "Z", ...]
 function getFromDeck(n) {
@@ -53,9 +61,9 @@ function getFromDeck(n) {
   var allTiles = [];
 
   // Make an array of all remaining tiles for a random selection.
-  for (var key in ScrabbleTiles) {
-    if (ScrabbleTiles.hasOwnProperty(key)) {
-      var remaining = ScrabbleTiles[key]["number-remaining"];
+  for (var key in scrabbleTiles) {
+    if (scrabbleTiles.hasOwnProperty(key)) {
+      var remaining = scrabbleTiles[key]["number-remaining"];
       for (var i = 0; i < remaining; ++i) {
         allTiles.push(key);
       }
@@ -68,16 +76,16 @@ function getFromDeck(n) {
       var randomIndex = getRandomInt(0, Object.keys(allTiles).length - 1);
       var randomLetter = allTiles[randomIndex];
       hand.push(randomLetter);
-      --ScrabbleTiles[randomLetter]["number-remaining"];
+      --scrabbleTiles[randomLetter]["number-remaining"];
       allTiles.splice(randomIndex, 1);
-      console.log("Handing out " + randomLetter + ". Remaining: " + ScrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
+      console.log("Handing out " + randomLetter + ". Remaining: " + scrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
     }
   }
 
   return hand;
 }
 
-function resetBoard() {
+function resetTiles() {
   // Remove all letter tiles. (Removing all elements of a class -
   // http://stackoverflow.com/questions/10842471/remove-all-elements-of-a-certain-class-with-javascript)
   var letterTiles = document.getElementsByClassName("letterTile");
@@ -86,9 +94,9 @@ function resetBoard() {
   }
 
   // Reset the deck.
-  for (var key in ScrabbleTiles) {
-    if (ScrabbleTiles.hasOwnProperty(key)) {
-      ScrabbleTiles[key]["number-remaining"] = ScrabbleTiles[key]["original-distribution"];
+  for (var key in scrabbleTiles) {
+    if (scrabbleTiles.hasOwnProperty(key)) {
+      scrabbleTiles[key]["number-remaining"] = scrabbleTiles[key]["original-distribution"];
     }
   }
 
@@ -99,22 +107,11 @@ function resetBoard() {
     var tileImageId = keyToTileImageId(key);
 
     // Add tile image.
-    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + ScrabbleTiles[key]["path"] + "\" class=\"letterTile\" />");
+    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" />");
 
     // Make the tile image draggable.
     $("#" + tileImageId).draggable();
   }
-
-  // Make the board images droppable.
-  $(".boardTile").droppable({
-    drop: function(event, ui) {
-      console.log("Dropped " + tileImageIdToKey(ui.draggable.attr("id")));
-      // Make the dropped letter snap to the board image.
-      $(ui.draggable).css("position", "absolute");
-      $(ui.draggable).css("top", $(this).position().top);
-      $(ui.draggable).css("left", $(this).position().left);
-    }
-  });
 }
 
 
@@ -147,7 +144,7 @@ function tileImageIdToKey(tileId) {
   return key;
 }
 
-// Converts an integer to a letter for the ScrabbleTiles key.
+// Converts an integer to a letter for the scrabbleTiles key.
 // N must be [0, 26], otherwise the function's behavior is undefined.
 // ex) 0 -> "A"
 //     25 -> "Z"
@@ -164,8 +161,41 @@ function intToKey(n) {
 }
 
 $(window).load(function() {
-  resetBoard();
+  var row, col;
+
+  // Lay down the board images.
+  for (row = 0; row < Object.keys(boardSlots).length; ++row) {
+    for (col = 0; col < Object.keys(boardSlots[row]).length; ++col) {
+      // Add tile image.
+      $("#board").append("<img src=\"" + boardSlots[row][col].image + "\" class=\"boardImage\" />");
+    }
+  }
+
+  // Make the board images droppable.
+  $(".boardImage").droppable({
+    drop: function(event, ui) {
+      var letter;
+      
+      // Check if a letter is already on this slot.
+
+
+
+      console.log("Dropped " + tileImageIdToKey(ui.draggable.attr("id")));
+      // Make the dropped letter snap to the board image.
+      $(ui.draggable).css("position", "absolute");
+      $(ui.draggable).css("top", $(this).position().top);
+      $(ui.draggable).css("left", $(this).position().left);
+    }
+  });
+
+  resetTiles();
 
   $("#word").html("hello");
   $("#score").html(90);
 });
+
+// Returns a random integer between min (inclusive) and max (inclusive).
+// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

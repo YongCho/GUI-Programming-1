@@ -13,8 +13,8 @@ File Description: Styles for the elements specific to assignment 9 page.
 /* Make the board fixed width so the tiles stay in a single row when window is shrinked.*/
 #board             { width: 620px; margin-left: auto; margin-right: auto; margin-bottom: 20px; }
 
-/* For some reason, zeroing the margin still leaves gap between the tiles. */
-.boardTile         { margin: 0px; border: 1px solid black; }
+/* Board images. */
+.boardImage         { margin: 1px; border: 1px solid black; }
 
 .buttonBox         { width: 150px; margin: auto; margin-bottom: 10px; }
 
