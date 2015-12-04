@@ -38,6 +38,46 @@ ScrabbleTiles["Y"] = { "value" : 4,  "original-distribution" : 2,  "number-remai
 ScrabbleTiles["Z"] = { "value" : 10, "original-distribution" : 1,  "number-remaining" : 1, "path" : "img/scrabble/Scrabble_Tile_Z.jpg"  } ;
 ScrabbleTiles["_"] = { "value" : 0,  "original-distribution" : 2,  "number-remaining" : 2, "path" : "img/scrabble/Scrabble_Tile_Blank.jpg"  } ;
 
+// Returns a random integer between min (inclusive) and max (inclusive).
+// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Hands out n random letter tiles from the deck adjusting the number-remaining properties for the ScrabbleTiles.
+// If there are less remaining tiles than the requested, then returns all remaining tiles.
+// Returns the hand as an array of letters.
+// ex) ["A", "K", "Z", ...]
+function getFromDeck(n) {
+  var hand = [];
+  var availableLetters = [];
+
+  // Find out which letters are still available to hand out.
+  for (var key in ScrabbleTiles) {
+    if (ScrabbleTiles.hasOwnProperty(key)) {
+      var remaining = ScrabbleTiles[key]["number-remaining"];
+      if (remaining) {
+        availableLetters.push(key);
+      }
+    }
+  }
+
+  // Try to pick out n letter tiles. If we don't have n tiles, then hand out whatever we have.
+  for (var i = 0; i < n; ++i) {
+    if (availableLetters.length) {
+      var randomIndex = getRandomInt(0, Object.keys(availableLetters).length - 1);
+      var randomLetter = availableLetters[randomIndex];
+      hand.push(randomLetter);
+      if (--ScrabbleTiles[randomLetter]["number-remaining"] == 0) {
+        // Handed out the last tile for this letter. Remove the letter from the pool of available letters.
+        availableLetters.splice(randomIndex, 1);
+      }
+      console.log("Handing out " + randomLetter + ". Remaining: " + ScrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + availableLetters + ".");
+    }
+  }
+
+  return hand;
+}
 
 function resetBoard() {
   // Remove all letter tiles. (Removing all elements of a class -
@@ -47,23 +87,31 @@ function resetBoard() {
     letterTiles[0].parentNode.removeChild(letterTiles[0]);
   }
 
-  // Replace the letter tiles.
+  // Reset the deck.
   for (var key in ScrabbleTiles) {
     if (ScrabbleTiles.hasOwnProperty(key)) {
-      var tileId = keyToTileId(key);
-      
-      // Add tile image for the letter.
-      $("#letterRack").append("<img id=\"" + tileId + "\" src=\"" + ScrabbleTiles[key]["path"] + "\" class=\"letterTile\" />");
-
-      // Make the letter tile image draggable.
-      $("#" + tileId).draggable();
+      ScrabbleTiles[key]["number-remaining"] = ScrabbleTiles[key]["original-distribution"];
     }
   }
 
-  // Make the board tile images droppable.
+  // Lay out the letter tile images.
+  var hand = getFromDeck(7);
+  for (var i = 0; i < hand.length; ++i) {
+    var key = hand[i];
+    var tileImageId = keyToTileImageId(key);
+
+    // Add tile image.
+    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + ScrabbleTiles[key]["path"] + "\" class=\"letterTile\" />");
+
+    // Make the tile image draggable.
+    $("#" + tileImageId).draggable();
+  }
+
+  // Make the board images droppable.
   $(".boardTile").droppable({
     drop: function(event, ui) {
-      console.log("Dropped " + tileIdToKey(ui.draggable.attr("id")));
+      console.log("Dropped " + tileImageIdToKey(ui.draggable.attr("id")));
+      // Make the dropped letter snap to the board image.
       $(ui.draggable).css("position", "absolute");
       $(ui.draggable).css("top", $(this).position().top);
       $(ui.draggable).css("left", $(this).position().left);
@@ -74,7 +122,7 @@ function resetBoard() {
 
 // Converts a letter c to the tile image ID representing that letter.
 // ex) "A" -> "letterTileA"
-function keyToTileId(letter) {
+function keyToTileImageId(letter) {
   var prefix = "letterTile";
   var id;
   
@@ -89,7 +137,7 @@ function keyToTileId(letter) {
 
 // Converts a letter tile image ID to a letter key.
 // ex) "letterTileA" -> "A"
-function tileIdToKey(tileId) {
+function tileImageIdToKey(tileId) {
   var key;
 
   if (tileId == "letterTileBlank") {
