@@ -78,15 +78,15 @@ Page Description: Assignment 9 archive
         <div id="instruction">
           <div>Create one word with no gap between letters.<img id="oneWordCheckIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
           <div>The word must contain at least 2 letters.<img id="minLengthIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
-          <div>The word must be in the dictionary.<img id="dictionaryCheckIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
+          <div>The word must be found in the dictionary.<img id="dictionaryCheckIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
         </div>
 
         <!-- Buttons -->
         <div class="buttonBox">
-          <button onclick="resetTiles()">Reset Tiles</button>
+          <button id="nextWordButton" onclick="nextWord()">Next Word</button>
+          <button id="restartButton" onclick="restart()">Restart</button>
+          <button id="finishButton" onclick="finish()">Finish</button>
         </div>
-
-
 
         <!-- Letters rack. Letter images are downloaded from
         https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Tiles.html. 

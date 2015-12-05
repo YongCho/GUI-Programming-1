@@ -77,24 +77,48 @@ function getFromDeck(n) {
       var randomLetter = allTiles[randomIndex];
       hand.push(randomLetter);
       --scrabbleTiles[randomLetter]["number-remaining"];
-      allTiles.splice(randomIndex, 1);
+      allTiles.splice(randomIndex, 1);  // Removes one element from the array.
       // console.log("Handing out " + randomLetter + ". Remaining: " + scrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
     }
+  }
+
+  if (!allTiles.length) {
+    // We ran out of tiles in the deck. Disable moving on to the next round.
+    document.getElementById("nextWordButton").disabled = true;
   }
 
   return hand;
 }
 
-// Reinitializes the deck and lays out new tiles.
-function resetTiles() {
-  var iRow, iCol;
+// Resets the board and tiles. Starts the first word.
+function restart() {
+  // Clear the rack. (We're putting all tiles back to the deck.)
+  $("#letterRack img").remove();
 
-  // Remove all letter tiles out on the page.
-  // Source: http://stackoverflow.com/questions/10842471/remove-all-elements-of-a-certain-class-with-javascript
-  var letterTiles = document.getElementsByClassName("letterTile");
-  while (letterTiles[0]) {
-    letterTiles[0].parentNode.removeChild(letterTiles[0]);
+  // Reset the deck data structure.
+  for (var key in scrabbleTiles) {
+    if (scrabbleTiles.hasOwnProperty(key)) {
+      scrabbleTiles[key]["number-remaining"] = scrabbleTiles[key]["original-distribution"];
+    }
   }
+
+  // Restart the score.
+  $("#score").html("");
+
+  // Enable the finish and next-word button if they are not already enabled.
+  document.getElementById("nextWordButton").disabled = false;
+  document.getElementById("finishButton").disabled = false;
+
+  // Start the first word.
+  nextWord();
+}
+
+// Removes all tiles from the board and refills the hand with whatever number of new tiles needed.
+function nextWord() {
+  var iRow, iCol, i, key, tileImageId, newTile, hand;
+
+  // Remove all letter tiles on the board (Leave the ones on the rack).
+  $("#board img").remove();
 
   // Reset the slot data structure.
   for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
@@ -104,46 +128,39 @@ function resetTiles() {
     }
   }
 
-  // Reset the deck data structure.
-  for (var key in scrabbleTiles) {
-    if (scrabbleTiles.hasOwnProperty(key)) {
-      scrabbleTiles[key]["number-remaining"] = scrabbleTiles[key]["original-distribution"];
-    }
-  }
-
-  // Lay out the letter tile images.
-  var hand = getFromDeck(7);
-  for (var i = 0; i < hand.length; ++i) {
-    var key = hand[i];
-    var tileImageId = generateTileId();
-
+  // Draw as many tiles as needed to refill the rack with 7 tiles. Lay out the tile images.
+  hand = getFromDeck(7 - $("#letterRack img").length);
+  for (i = 0; i < hand.length; ++i) {
+    key = hand[i];
+    tileImageId = generateTileId();
+    newTile = $("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" letter=\"" + key + "\" />");
     // Add tile image.
-    $("#letterRack").append("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" letter=\"" + key + "\" />");
+    $("#letterRack").append(newTile);
+
+    // Apply CSS condition for the tile being on the rack. This may do minor position adjustment
+    // to the tile image in order to make it sit naturally on the rack background image.
+    newTile.addClass("letterTileOnRack");
+
+    // Make the tile draggable.
+    newTile.draggable({
+      revertDuration: 200,  // msec
+      start: function(event, ui) {
+        // Tile should be on top of everything else when being dragged.
+        $(this).css("z-index", "100");
+
+        // Revert option needs to be manually reset because it gets modified by droppables 
+        // to force reverting after dropping has occured.
+        $(this).draggable("option", "revert", "invalid");
+      },
+      stop: function() {
+        // Once finished dragging, reset the z-index.
+        $(this).css("z-index", "");
+      }
+    });
   }
 
-  // Make the tile images draggable.
-  $(".letterTile").draggable({
-    revertDuration: 200,  // msec
-    start: function(event, ui) {
-      // Tile should be on top of everything else when being dragged.
-      $(this).css("z-index", "100");
-
-      // Revert option needs to be manually reset because it gets modified by droppables 
-      // to force reverting after dropping has occured.
-      $(this).draggable("option", "revert", "invalid");
-    },
-    stop: function() {
-      // Once finished dragging, revert the z-index.
-      $(this).css("z-index", "");
-    }
-  });
-
-  // Initially all tiles are on the rack. Apply css for that condition.
-  $(".letterTile").addClass("letterTileOnRack");
-
-  // Clear the scoreboard.
+  // Clear the current word display.
   $("#word").html("");
-  $("#score").html("");
 
   // Clear the check marks on the instruction.
   checkSingleWord(false);
@@ -151,13 +168,24 @@ function resetTiles() {
   checkDictionary(false);
 }
 
-// Generates a unique string to be used as a tile ID.
+// Records the highest score.
+function finish() {
+  console.log("finish()");
+  // Record the highest score.
+
+  // Once you decide to finish and record the score, you shouldn't be able to proceed anymore with the same score.
+  // Disable the next-word and finish buttons.
+  document.getElementById("nextWordButton").disabled = true;
+  document.getElementById("finishButton").disabled = true;
+}
+
+// Generates a unique string to be used as a tile ID. This function generates a unique string
+// as long as the page stays loaded.
 function generateTileId() {
   var id;
 
   generateTileId.id = ++generateTileId.id || 1;
   id = "tile" + generateTileId.id.toString();
-  // console.log("Tile ID = " + id);
 
   return id;
 }
@@ -415,5 +443,6 @@ $(window).load(function() {
     }
   });
 
-  resetTiles();
+  // Reset the board and tiles. Start the first word.
+  restart();
 });
