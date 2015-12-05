@@ -147,6 +147,7 @@ function resetTiles() {
 
   // Clear the check marks on the instruction.
   checkSingleWord(false);
+  checkTwoLettersAndMore(false);
   checkDictionary(false);
 }
 
@@ -180,16 +181,15 @@ function printBoard() {
 
 // Checks if a string is a valid dictionary word.
 // Source: Student note on Piazza (https://piazza.com/class/icm9jynacvn5kx?cid=43)
-function isWord(possibleWord) {
-  possibleWord = possibleWord.trim();
-  if (possibleWord.length > 1 && isWord.dict[possibleWord]) {
+function isDictionaryWord(possibleWord) {
+  if (possibleWord.length > 0 && isDictionaryWord.dict[possibleWord]) {
     return true;
   }
 
   return false;
 }
 // The dictionary lookup object
-isWord.dict = {};
+isDictionaryWord.dict = {};
 // Do an ajax request for the dictionary file.
 $.ajax({
   url: "assignment9/dictionary.txt",
@@ -200,7 +200,7 @@ $.ajax({
     // Add them as properties to the dictionary lookup object.
     // This will allow for fast lookups later. All words are converted to capital letters.
     for (var i = 0; i < words.length; ++i) {
-      isWord.dict[words[i].toUpperCase()] = true;
+      isDictionaryWord.dict[words[i].toUpperCase()] = true;
     }
   }
 });
@@ -234,7 +234,12 @@ function validateWord() {
   } else {
     checkSingleWord(true);
   }
-  if (isWord(word)) {
+  if (word.length >= 2) {
+    checkTwoLettersAndMore(true);
+  } else {
+    checkTwoLettersAndMore(false);
+  }
+  if (isDictionaryWord(word)) {
     checkDictionary(true);
   } else {
     checkDictionary(false);
@@ -264,6 +269,14 @@ function grayscaleAndFade(jQueryObject, yes) {
       "filter": "",
       "opacity": 1.0
     });
+  }
+}
+
+function checkTwoLettersAndMore(check) {
+  if (check) {
+    grayscaleAndFade($("#minLengthIcon"), false);
+  } else {
+    grayscaleAndFade($("#minLengthIcon"), true);
   }
 }
 
