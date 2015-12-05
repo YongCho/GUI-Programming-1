@@ -11,20 +11,22 @@ File Description: Styles for the elements specific to assignment 9 page.
 #word, #score      { display: inline-block; position: absolute; font-weight: bold; }
 
 /* Make the board fixed width so the tiles stay in a single row when window is shrinked.*/
-#board             { width: 620px; margin-left: auto; margin-right: auto; margin-bottom: 20px; text-align: center; }
+#board             { margin-left: auto; margin-right: auto; margin-bottom: 20px; text-align: center; }
 
-/* Board images. */
-.boardImage         { margin: 1px; border: 1px solid black; }
+/* Board slots. Margin, padding, and border thickness are to be set by JavaScript. */
+.boardSlot         { border-style: solid; border-color: black; float: left; }
 
-.buttonBox         { margin: auto; margin-bottom: 10px; text-align: center; }
+.buttonBox         { margin: auto; margin-bottom: 20px; text-align: center; }
 
 /* Error message container. Give it a fixed height so having no error message won't shift the page. */
 #errorMsg          { color: red; text-align: center; margin-bottom: 30px; height: 20px; }
 
 #letterRack        { width: 620px; height: 144px; margin-left: auto; margin-right: auto; text-align: center; background-image: url("../img/scrabble/rack.png"); }
-.letterTile        { border-radius: 4px; }
-/* Adjust position so it sits naturally on the rack background image. */
-.letterTileOnRack  { margin-top: 27px; }
+.letterTile        { border-radius: 4px; margin: 0px; }
+
+/* Adjust position so the tile sits naturally on the rack and board background image. */
+.letterTileOnRack  { margin: 27px 5px 0px 5px; }
+.letterTileOnBoard { top: 3px; }
 
 /* Highlight drop targets when dragging a tile and hovering over a specific board slot. */
 .dragHighlight     { box-shadow: 0px 0px 15px green; }

@@ -7,7 +7,7 @@ File Description: JavaScript for assignment 9 page.
 
 "use strict";
 
-/* This associative array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp. 
+/* This array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp. 
 I added "image" property to it. */
 var scrabbleTiles = [] ;
 scrabbleTiles["A"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "image" : "img/scrabble/Scrabble_Tile_A.jpg"  } ;
@@ -89,8 +89,8 @@ function getFromDeck(n) {
 function resetTiles() {
   var iRow, iCol;
 
-  // Remove all letter tiles out on the page. (Removing all elements of a class -
-  // http://stackoverflow.com/questions/10842471/remove-all-elements-of-a-certain-class-with-javascript)
+  // Remove all letter tiles out on the page.
+  // Source: http://stackoverflow.com/questions/10842471/remove-all-elements-of-a-certain-class-with-javascript
   var letterTiles = document.getElementsByClassName("letterTile");
   while (letterTiles[0]) {
     letterTiles[0].parentNode.removeChild(letterTiles[0]);
@@ -157,7 +157,7 @@ function generateTileId() {
 }
 
 // Returns a random integer between min (inclusive) and max (inclusive).
-// (http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range)
+// Source: http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -175,21 +175,30 @@ function printBoard() {
 
 // Checks if a string is a valid dictionary word.
 function isWord(possibleWord) {
-  
+
 }
 
 $(window).load(function() {
   var row, col;
+  var IMAGE_WIDTH = 81, IMAGE_HEIGHT = 87, SLOT_MARGIN = 1, SLOT_BORDER_WIDTH = 1;
+
+  // Set the fixed height for the board appropriate for the number of rows.
+  $("#board").css("height", (IMAGE_HEIGHT + 2 * (SLOT_MARGIN + SLOT_BORDER_WIDTH)) * Object.keys(boardSlots).length);
+  // Set the fixed width for the board to accomodate one full row.
+  $("#board").css("width", (IMAGE_WIDTH + 2 * (SLOT_MARGIN + SLOT_BORDER_WIDTH)) * Object.keys(boardSlots[0]).length);
 
   // Lay down the board images.
   for (row = 0; row < Object.keys(boardSlots).length; ++row) {
     for (col = 0; col < Object.keys(boardSlots[row]).length; ++col) {
-      $("#board").append("<img src=\"" + boardSlots[row][col].image + "\" class=\"boardImage\" row=\"" + row + "\" col=\"" + col + "\" />");
+      var bgImagePath = boardSlots[row][col].image;
+      var newSlot = $("<div class=\"boardSlot\" row=\"" + row + "\" col=\"" + col + "\" style=\"background-image: url(" + bgImagePath + ")\" />");
+      $("#board").append(newSlot);
+      newSlot.css({"width": IMAGE_WIDTH, "height": IMAGE_HEIGHT, "margin": SLOT_MARGIN, "border-width": SLOT_BORDER_WIDTH});
     }
   }
 
   // Make the board images droppable.
-  $(".boardImage").droppable({
+  $(".boardSlot").droppable({
     accept: function(draggable) {
       var row, col;
 
@@ -213,6 +222,7 @@ $(window).load(function() {
       var row, col, letter, tileId, iRow, iCol;
 
       ui.draggable.removeClass("letterTileOnRack");
+      ui.draggable.addClass("letterTileOnBoard");
 
       row = $(this).attr("row");
       col = $(this).attr("col");
@@ -221,9 +231,9 @@ $(window).load(function() {
       tileId = ui.draggable.attr("id");
 
       // Make the dropped tile snap to the board image.
-      $(ui.draggable).css("top", $(this).position().top);
-      $(ui.draggable).css("left", $(this).position().left);
-      $(ui.draggable).css("position", "absolute");
+      $(ui.draggable).css("top", "");
+      $(ui.draggable).css("left", "");
+      $(this).append(ui.draggable);
 
       console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
@@ -250,7 +260,9 @@ $(window).load(function() {
     drop: function(event, ui) {
       var tileId, iRow, iCol;
 
+      ui.draggable.removeClass("letterTileOnBoard");
       ui.draggable.addClass("letterTileOnRack");
+
       tileId = ui.draggable.attr("id");
 
       // If the tile came from the board, clear the properties for the slot it came from.
