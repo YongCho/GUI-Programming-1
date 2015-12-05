@@ -85,6 +85,7 @@ function getFromDeck(n) {
   return hand;
 }
 
+// Reinitializes the deck and lays out new tiles.
 function resetTiles() {
   var iRow, iCol;
 
@@ -172,6 +173,11 @@ function printBoard() {
   }
 }
 
+// Checks if a string is a valid dictionary word.
+function isWord(possibleWord) {
+  
+}
+
 $(window).load(function() {
   var row, col;
 
@@ -255,7 +261,7 @@ $(window).load(function() {
             $("#letterRack").append(ui.draggable);
             ui.draggable.css({"position": "relative", "top": "", "left": ""});
 
-            // Make the tile off the board.
+            // Mark the tile off the board.
             delete boardSlots[iRow][iCol].tileId;
             delete boardSlots[iRow][iCol].letter;
 
@@ -264,7 +270,7 @@ $(window).load(function() {
         }
       }
 
-      // User grabbed a tile and put it right back to the rack. Use the revert function
+      // User grabbed a tile and put it right back on the rack. Use the revert function
       // to put the tile in the same spot it came out of.
       ui.draggable.draggable("option", "revert", true);
     }    
