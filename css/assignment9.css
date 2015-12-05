@@ -6,9 +6,11 @@ File Description: Styles for the elements specific to assignment 9 page.
 */
 
 
-#scoreBoard        { width: 120px; margin-left: auto; margin-right: auto; margin-bottom: 20px; margin-top: 40px; }
-#scoreBoard .label { width: 50px; margin-right: 10px; text-align: right; display: inline-block; }
-#word, #score      { display: inline-block; position: absolute; font-weight: bold; }
+#scoreBoard        { width: 600px; margin: 30px auto 10px auto; padding-bottom: 5px; border-bottom: 1px solid #339933; }
+#scoreBoard div    { display: inline-block; }
+#scoreBoard > div  { margin-right: 10px; }
+#scoreBoard > div > div:nth-child(2)  /* Values that follow the labels ...*/
+									 { width: 50px; font-weight: bold; }
 
 /* Make the board fixed width so the tiles stay in a single row when window is shrinked.*/
 #board             { margin-left: auto; margin-right: auto; margin-bottom: 20px; text-align: center; }
