@@ -62,24 +62,30 @@ Page Description: Assignment 9 archive
         <div id="scoreBoard">
           <div>
             <div class="label">Word:</div>
-            <div id="word"></div>
+            <div id="word"><!-- Word goes here. --></div>
           </div>
           <div>
             <div class="label">Score:</div>
-            <div id="score"></div>
+            <div id="score"><!-- Score goes here. --></div>
           </div>
         </div>
 
         <!-- Scrabble board container -->
         <div id="board"></div>
 
+        <!-- List of conditions that the word must meet. JavaScript checks off each of them
+        as the user builds a word. -->
+        <div id="instruction">
+          <div>Create one word with no gap between letters.<img id="oneWordCheckIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
+          <div>The word must be in the dictionary.<img id="dictionaryCheckIcon" src="img/checkIcon.png" class="instructionIcon" /></div>
+        </div>
+
         <!-- Buttons -->
         <div class="buttonBox">
           <button onclick="resetTiles()">Reset Tiles</button>
         </div>
 
-        <!-- Error Message container -->
-        <div id="errorMsg"></div>
+
 
         <!-- Letters rack. Letter images are downloaded from
         https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Tiles.html. 

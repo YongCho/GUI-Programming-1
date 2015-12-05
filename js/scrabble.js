@@ -78,7 +78,7 @@ function getFromDeck(n) {
       hand.push(randomLetter);
       --scrabbleTiles[randomLetter]["number-remaining"];
       allTiles.splice(randomIndex, 1);
-      console.log("Handing out " + randomLetter + ". Remaining: " + scrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
+      // console.log("Handing out " + randomLetter + ". Remaining: " + scrabbleTiles[randomLetter]["number-remaining"] + ". Available: " + allTiles + ".");
     }
   }
 
@@ -125,9 +125,6 @@ function resetTiles() {
   $(".letterTile").draggable({
     revertDuration: 200,  // msec
     start: function(event, ui) {
-      // Clear any error message when dragging starts.
-      $("#errorMsg").empty();
-
       // Tile should be on top of everything else when being dragged.
       $(this).css("z-index", "100");
 
@@ -143,6 +140,14 @@ function resetTiles() {
 
   // Initially all tiles are on the rack. Apply css for that condition.
   $(".letterTile").addClass("letterTileOnRack");
+
+  // Clear the scoreboard.
+  $("#word").html("");
+  $("#score").html("");
+
+  // Clear the check marks on the instruction.
+  checkSingleWord(false);
+  checkDictionary(false);
 }
 
 // Generates a unique string to be used as a tile ID.
@@ -151,7 +156,7 @@ function generateTileId() {
 
   generateTileId.id = ++generateTileId.id || 1;
   id = "tile" + generateTileId.id.toString();
-  console.log("Tile ID = " + id);
+  // console.log("Tile ID = " + id);
 
   return id;
 }
@@ -174,12 +179,112 @@ function printBoard() {
 }
 
 // Checks if a string is a valid dictionary word.
+// Source: Student note on Piazza (https://piazza.com/class/icm9jynacvn5kx?cid=43)
 function isWord(possibleWord) {
+  possibleWord = possibleWord.trim();
+  if (possibleWord.length > 1 && isWord.dict[possibleWord]) {
+    return true;
+  }
 
+  return false;
+}
+// The dictionary lookup object
+isWord.dict = {};
+// Do an ajax request for the dictionary file.
+$.ajax({
+  url: "assignment9/dictionary.txt",
+  success: function(result) {
+    // Get an array of all the words.
+    var words = result.split("\n");
+
+    // Add them as properties to the dictionary lookup object.
+    // This will allow for fast lookups later. All words are converted to capital letters.
+    for (var i = 0; i < words.length; ++i) {
+      isWord.dict[words[i].toUpperCase()] = true;
+    }
+  }
+});
+
+// Reads the letters on the board and returns them as a string.
+function validateWord() {
+  var iCol, columnLength, letter, word = "", ROW = 0;
+
+  columnLength = Object.keys(boardSlots[ROW]).length;
+
+  // Read each letter and append them to word.
+  for (iCol = 0; iCol < columnLength; ++iCol) {
+    letter = boardSlots[ROW][iCol].letter;
+    if (typeof(letter) === "undefined") {
+      // Use special character to represent an empty slot.
+      word += "\xB7";  // middle dot character
+    } else {
+      word += letter;
+    }    
+  }
+
+  // Remove leading and trailing empty slot characters.
+  word = word.replace(/^\xB7+/, "");
+  word = word.replace(/\xB7+$/, "");
+
+  $("#word").html(word);
+
+  var rgxDisconnectedWord = new RegExp("[A-Z_]\xB7+[A-Z_]");
+  if (word == "" || rgxDisconnectedWord.test(word)) {
+    checkSingleWord(false);
+  } else {
+    checkSingleWord(true);
+  }
+  if (isWord(word)) {
+    checkDictionary(true);
+  } else {
+    checkDictionary(false);
+  }
+
+  return word;
+}
+
+// Make a jQuery object grayscale and semi-transparent.
+// CSS source: http://blog.nmsdvid.com/css-filter-property/
+function grayscaleAndFade(jQueryObject, yes) {
+  if (yes) {
+    jQueryObject.css({
+      "-webkit-filter": "grayscale(100%)", 
+      "-moz-filter": "grayscale(100%)", 
+      "-o-filter": "grayscale(100%)", 
+      "-ms-filter": "grayscale(100%)", 
+      "filter": "grayscale(100%)",
+      "opacity": 0.2
+    });
+  } else {
+    jQueryObject.css({
+      "-webkit-filter": "", 
+      "-moz-filter": "", 
+      "-o-filter": "", 
+      "-ms-filter": "", 
+      "filter": "",
+      "opacity": 1.0
+    });
+  }
+}
+
+function checkSingleWord(check) {
+  if (check) {
+    grayscaleAndFade($("#oneWordCheckIcon"), false);
+  } else {
+    grayscaleAndFade($("#oneWordCheckIcon"), true);
+  }
+}
+
+function checkDictionary(check) {
+  if (check) {
+    grayscaleAndFade($("#dictionaryCheckIcon"), false);
+  } else {
+    grayscaleAndFade($("#dictionaryCheckIcon"), true);
+  }
 }
 
 $(window).load(function() {
-  var row, col;
+  var row, col, bgImagePath, newSlot;
   var IMAGE_WIDTH = 81, IMAGE_HEIGHT = 87, SLOT_MARGIN = 1, SLOT_BORDER_WIDTH = 1;
 
   // Set the fixed height for the board appropriate for the number of rows.
@@ -190,8 +295,8 @@ $(window).load(function() {
   // Lay down the board images.
   for (row = 0; row < Object.keys(boardSlots).length; ++row) {
     for (col = 0; col < Object.keys(boardSlots[row]).length; ++col) {
-      var bgImagePath = boardSlots[row][col].image;
-      var newSlot = $("<div class=\"boardSlot\" row=\"" + row + "\" col=\"" + col + "\" style=\"background-image: url(" + bgImagePath + ")\" />");
+      bgImagePath = boardSlots[row][col].image;
+      newSlot = $("<div class=\"boardSlot\" row=\"" + row + "\" col=\"" + col + "\" style=\"background-image: url(" + bgImagePath + ")\" />");
       $("#board").append(newSlot);
       newSlot.css({"width": IMAGE_WIDTH, "height": IMAGE_HEIGHT, "margin": SLOT_MARGIN, "border-width": SLOT_BORDER_WIDTH});
     }
@@ -199,6 +304,7 @@ $(window).load(function() {
 
   // Make the board images droppable.
   $(".boardSlot").droppable({
+    // This function determines which slots get highlighted when dragging a tile.
     accept: function(draggable) {
       var row, col;
 
@@ -219,7 +325,7 @@ $(window).load(function() {
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
     drop: function(event, ui) {
-      var row, col, letter, tileId, iRow, iCol;
+      var row, col, letter, word, tileId, iRow, iCol;
 
       ui.draggable.removeClass("letterTileOnRack");
       ui.draggable.addClass("letterTileOnBoard");
@@ -250,6 +356,10 @@ $(window).load(function() {
       // Record that this slot has the tile now.
       boardSlots[row][col].letter = letter;
       boardSlots[row][col].tileId = tileId;
+
+      // Print the word we have so far.
+      word = validateWord();
+      console.log("word: " + word);
     }
   });
 
@@ -258,7 +368,7 @@ $(window).load(function() {
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
     drop: function(event, ui) {
-      var tileId, iRow, iCol;
+      var tileId, iRow, iCol, word;
 
       ui.draggable.removeClass("letterTileOnBoard");
       ui.draggable.addClass("letterTileOnRack");
@@ -277,6 +387,10 @@ $(window).load(function() {
             delete boardSlots[iRow][iCol].tileId;
             delete boardSlots[iRow][iCol].letter;
 
+            // Print the word we have so far.
+            word = validateWord();
+            console.log("word: " + word);
+
             return;
           }
         }
@@ -285,7 +399,7 @@ $(window).load(function() {
       // User grabbed a tile and put it right back on the rack. Use the revert function
       // to put the tile in the same spot it came out of.
       ui.draggable.draggable("option", "revert", true);
-    }    
+    }
   });
 
   resetTiles();
