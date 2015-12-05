@@ -130,43 +130,18 @@ function resetTiles() {
       // Tile should be on top of everything else when being dragged.
       $(this).css("z-index", "100");
 
-      // This function is called when the tile is released from dragging. In case the tile was
-      // not dropped on the board, it takes different actions depending on where the tile
-      // originally came from. If the tile came from the rack, it reverts it back to the rack.
-      // If the tile came from the board, it again moves it to the rack because the user probably
-      // wanted to take it out of the board. However, in this case, the job is done manually because 
-      // 'auto reverting' would put it back to the board.
-      $(this).draggable("option", "revert", function(accepted) {
-        var iRow, iCol;
-
-        if (accepted === false) {
-          // Iterate the board slots and see if the tile came from any of the slots.
-          for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
-            for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
-              if (boardSlots[iRow][iCol].tileId === $(this).attr("id")) {
-                // The tile came from the board and dropped outside the board. Put it back in the rack.
-                delete boardSlots[iRow][iCol].tileId;
-                delete boardSlots[iRow][iCol].letter;
-                $("#letterRack").append($(this));
-                $(this).css({"position": "relative", "top": "0px", "left": "0px" });
-
-                // We're manually putting it in the rack. Don't revert it back to the board.
-                return false;
-              }
-            }
-          }
-
-          // If we got here, the tile came from the rack. Revert it back to the rack.
-          return true;
-        }
-      });
+      // Revert option needs to be manually reset because it gets modified by droppables 
+      // to force reverting after dropping has occured.
+      $(this).draggable("option", "revert", "invalid");
     },
     stop: function() {
-      // Once finished dragging, lower the z-index so that the tile is above the
-      // board iamge and below other tiles that are being dragged.
-      $(this).css("z-index", "99");
+      // Once finished dragging, revert the z-index.
+      $(this).css("z-index", "");
     }
   });
+
+  // Initially all tiles are on the rack. Apply css for that condition.
+  $(".letterTile").addClass("letterTileOnRack");
 }
 
 // Generates a unique string to be used as a tile ID.
@@ -203,57 +178,96 @@ $(window).load(function() {
   // Lay down the board images.
   for (row = 0; row < Object.keys(boardSlots).length; ++row) {
     for (col = 0; col < Object.keys(boardSlots[row]).length; ++col) {
-      // Add tile image.
       $("#board").append("<img src=\"" + boardSlots[row][col].image + "\" class=\"boardImage\" row=\"" + row + "\" col=\"" + col + "\" />");
     }
   }
 
   // Make the board images droppable.
   $(".boardImage").droppable({
-    accept: ".letterTile",
+    accept: function(draggable) {
+      var row, col;
+
+      row = $(this).attr("row");
+      col = $(this).attr("col");
+
+      if (boardSlots[row][col].tileId === draggable.attr("id")) {
+        // The tile should be able to drop back in to the slot it was lifted out of.
+        return true;
+      } else if (typeof(boardSlots[row][col].tileId) === "undefined") {
+        // The slot is empty.
+        return true;
+      } else {
+        // The slot is already occupied.
+        return false;
+      }
+    },
+    activeClass: "dragHighlight",
+    hoverClass: "hoverHighlight",
     drop: function(event, ui) {
       var row, col, letter, tileId, iRow, iCol;
+
+      ui.draggable.removeClass("letterTileOnRack");
 
       row = $(this).attr("row");
       col = $(this).attr("col");
       
-      // Check if a tile is already on this slot.
-      if (typeof(boardSlots[row][col].tileId) === "undefined") {
-        letter = ui.draggable.attr("letter");
-        tileId = ui.draggable.attr("id");
+      letter = ui.draggable.attr("letter");
+      tileId = ui.draggable.attr("id");
 
-        // Make the dropped tile snap to the board image.
-        $(ui.draggable).css("position", "absolute");
-        $(ui.draggable).css("top", $(this).position().top);
-        $(ui.draggable).css("left", $(this).position().left);
+      // Make the dropped tile snap to the board image.
+      $(ui.draggable).css("top", $(this).position().top);
+      $(ui.draggable).css("left", $(this).position().left);
+      $(ui.draggable).css("position", "absolute");
 
-        console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
+      console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
-        // If the tile came from another slot, clear the properties for that slot.
-        for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
-          for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
-            if (boardSlots[iRow][iCol].tileId === tileId) {
-              delete boardSlots[iRow][iCol].tileId;
-              delete boardSlots[iRow][iCol].letter;
-            }
+      // If the tile came from another slot, clear the properties for that slot.
+      for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+        for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+          if (boardSlots[iRow][iCol].tileId === tileId) {
+            delete boardSlots[iRow][iCol].tileId;
+            delete boardSlots[iRow][iCol].letter;
           }
         }
-
-        // Record that this slot has the tile now.
-        boardSlots[row][col].letter = letter;
-        boardSlots[row][col].tileId = tileId;
-      } else {
-        // There is already a tile on the slot. Revert the tile back to where it came from.
-        ui.draggable.draggable("option", "revert", true);
-        if (ui.draggable.attr("id") != boardSlots[row][col].tileId) {
-          // In this case, the user brought over a different tile.
-          $("#errorMsg").html("You can't place a letter over another letter.");
-        } 
-        // else, the same tile came back to the slot. 
-        // Maybe the user decided to move out the tile and changed their mind?
-        // Anyway, no warning message is necessary.
       }
+
+      // Record that this slot has the tile now.
+      boardSlots[row][col].letter = letter;
+      boardSlots[row][col].tileId = tileId;
     }
+  });
+
+  // Make the rack droppable so the tiles can be dropped in it.
+  $("#letterRack").droppable({
+    activeClass: "dragHighlight",
+    hoverClass: "hoverHighlight",
+    drop: function(event, ui) {
+      var tileId, iRow, iCol;
+
+      ui.draggable.addClass("letterTileOnRack");
+      tileId = ui.draggable.attr("id");
+
+      // If the tile came from the board, clear the properties for the slot it came from.
+      for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+        for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+          if (boardSlots[iRow][iCol].tileId === tileId) {
+            // Place the tile on the rack.
+            $("#letterRack").append(ui.draggable);
+            ui.draggable.css({"position": "relative", "top": "", "left": ""});
+
+            // Make the tile off the board.
+            delete boardSlots[iRow][iCol].tileId;
+            delete boardSlots[iRow][iCol].letter;
+
+            return;
+          }
+        }
+      }
+
+      // User grabbed a tile and put it right back to the rack. Use the revert function
+      // to put the tile in the same spot it came out of.
+      ui.draggable.draggable("option", "revert", true);
+    }    
   });
 
   resetTiles();

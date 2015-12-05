@@ -21,7 +21,14 @@ File Description: Styles for the elements specific to assignment 9 page.
 /* Error message container. Give it a fixed height so having no error message won't shift the page. */
 #errorMsg          { color: red; text-align: center; margin-bottom: 30px; height: 20px; }
 
-#letterRack        { width: 620px; margin-left: auto; margin-right: auto; text-align: center; }
+#letterRack        { width: 620px; height: 144px; margin-left: auto; margin-right: auto; text-align: center; background-image: url("../img/scrabble/rack.png"); }
+.letterTile        { border-radius: 4px; }
+/* Adjust position so it sits naturally on the rack background image. */
+.letterTileOnRack  { margin-top: 27px; }
+
+/* Highlight drop targets when dragging a tile and hovering over a specific board slot. */
+.dragHighlight     { box-shadow: 0px 0px 15px green; }
+.hoverHighlight    { box-shadow: 0px 0px 15px blue; }
 
 
 /* Button style copied from http://www.bestcssbuttongenerator.com/#/28. */
