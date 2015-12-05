@@ -82,6 +82,9 @@ function getFromDeck(n) {
     }
   }
 
+  // Display number of remaining tiles on the scoreboard.
+  $("#remainingTiles").html(allTiles.length);
+
   if (!allTiles.length) {
     // We ran out of tiles in the deck. Disable moving on to the next round.
     document.getElementById("nextWordButton").disabled = true;
