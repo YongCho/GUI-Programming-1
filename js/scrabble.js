@@ -86,11 +86,29 @@ function getFromDeck(n) {
   $("#remainingTiles").html(allTiles.length);
 
   if (!allTiles.length) {
-    // We ran out of tiles in the deck. Disable moving on to the next round.
-    document.getElementById("nextWordButton").disabled = true;
+    // We ran out of tiles to hand out. Disable moving on to the next round.
+    toggleFinishButton(true);
   }
 
   return hand;
+}
+
+// Switches the appearance and functionality of the 'next-word' button. If 'toFinishButton' is true,
+// changes the button to 'finish' button. This may happen when we run out of tiles to hand out and
+// cannot proceed to the next round. Does the opposite if toFinishButton is false.
+function toggleFinishButton(toFinishButton) {
+  var nextWordButton = document.getElementById("nextWordButton");
+  if (toFinishButton) {
+    nextWordButton.innerHTML = "Finish";
+    nextWordButton.onclick = function(event) {
+      finish();
+    }
+  } else {
+    nextWordButton.innerHTML = "Next Word";
+    nextWordButton.onclick = function(event) {
+      nextWord();
+    }
+  }
 }
 
 // Resets the board and tiles. Starts the first word.
@@ -105,12 +123,12 @@ function restart() {
     }
   }
 
-  // Restart the score.
+  // Reset the score.
   $("#score").html("");
 
-  // Enable the finish and next-word button if they are not already enabled.
+  // Activate the next-word button if it is not already activated.
+  toggleFinishButton(false);
   document.getElementById("nextWordButton").disabled = false;
-  document.getElementById("finishButton").disabled = false;
 
   // Start the first word.
   nextWord();
@@ -171,15 +189,16 @@ function nextWord() {
   checkDictionary(false);
 }
 
-// Records the highest score.
+// Adds up the current board score to the total score and stops the play.
+// The only action that can be taken after this is restarting the play from the beginning.
 function finish() {
   console.log("finish()");
-  // Record the highest score.
 
-  // Once you decide to finish and record the score, you shouldn't be able to proceed anymore with the same score.
-  // Disable the next-word and finish buttons.
+  // Disable next-word/finish button.
   document.getElementById("nextWordButton").disabled = true;
-  document.getElementById("finishButton").disabled = true;
+
+  // Also disable all draggables.
+  $(".letterTile").draggable("disable");
 }
 
 // Generates a unique string to be used as a tile ID. This function generates a unique string
