@@ -6,9 +6,8 @@ File Description: Styles for the elements specific to assignment 9 page.
 */
 
 
-#scoreBoard        { width: 650px; margin: 30px auto 10px auto; padding-bottom: 5px; border-bottom: 1px solid #339933; font-size: 14px; }
+#scoreBoard        { width: 600px; margin: 30px auto 10px auto; padding-bottom: 5px; border-bottom: 1px solid #339933; font-size: 14px; }
 #scoreBoard div    { display: inline-block; }
-#scoreBoard > div  { margin-right: 10px; }
 #scoreBoard > div > div:nth-child(2)  /* Values that follow the labels ...*/
 									 { width: 72px; font-weight: bold; }
 
