@@ -263,6 +263,10 @@ function nextWord() {
   checkSingleWord(false);
   checkTwoLettersAndMore(false);
   checkDictionary(false);
+
+  // 'Next Word' button is initially disabled. A valid word must be created in order to
+  // proceed to the next word.
+  document.getElementById("nextWordButton").disabled = true;
 }
 
 // Adds up the current board score to the total score and stops the play.
@@ -394,9 +398,11 @@ function validateWord() {
   }
 
   if (errorCount) {
+    document.getElementById("nextWordButton").disabled = true;
     return false;
   }
 
+  document.getElementById("nextWordButton").disabled = false;
   return word;
 }
 
