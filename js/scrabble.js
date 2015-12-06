@@ -92,7 +92,9 @@ scrabbleScore.calculateBoardScore = function() {
 scrabbleScore.refresh = function() {
   var boardScore = scrabbleScore.calculateBoardScore();
 
-  $("#score").html(scrabbleScore.totalScore + " (+" + boardScore + ")");
+  $("#score").css("color", "");
+  $("#score").html(scrabbleScore.totalScore + " (+<span id='boardScore'>" + boardScore + "</span>)");
+  $("#boardScore").css("color", "#339933");
   $("#highestScore").html(scrabbleScore.highestScore);
 }
 
@@ -103,6 +105,9 @@ scrabbleScore.commit = function() {
 
   scrabbleScore.totalScore += boardScore;
   $("#score").html(scrabbleScore.totalScore);
+  if (scrabbleScore.totalScore > 0) {
+    $("#score").css("color", "#339933");
+  }
 
   if (scrabbleScore.totalScore > scrabbleScore.highestScore) {
     scrabbleScore.highestScore = scrabbleScore.totalScore;
@@ -261,12 +266,25 @@ function getFromDeck(n) {
   // Display number of remaining tiles on the scoreboard.
   $("#remainingTiles").html(allTiles.length);
 
-  if (!allTiles.length) {
-    // We ran out of tiles to hand out. Disable moving on to the next word.
-    toggleFinishButton(true);
+  return hand;
+}
+
+// Returns the total number of tiles remaining in the deck.
+function numTilesInDeck() {
+  var numTotalTiles = 0;
+
+  for (var key in scrabbleTiles) {
+    if (scrabbleTiles.hasOwnProperty(key)) {
+      numTotalTiles += scrabbleTiles[key]["number-remaining"];
+    }
   }
 
-  return hand;
+  return numTotalTiles;
+}
+
+// Returns the number of tiles currently on the rack.
+function numTilesOnRack() {
+  return $("#letterRack img").length;
 }
 
 // Switches the appearance and functionality of the 'next-word' button. If 'toFinishButton' is true,
@@ -323,7 +341,7 @@ function nextWord() {
   scrabbleBoard.clearBoard();
 
   // Draw as many tiles as needed to refill the rack with 7 tiles. Lay out the tile images.
-  hand = getFromDeck(7 - $("#letterRack img").length);
+  hand = getFromDeck(7 - numTilesOnRack());
   for (i = 0; i < hand.length; ++i) {
     key = hand[i];
     tileImageId = generateTileId();
@@ -361,9 +379,15 @@ function nextWord() {
   checkTwoLettersAndMore(false);
   checkDictionary(false);
 
-  // 'Next Word' button is initially disabled. A valid word must be created in order to
-  // proceed to the next word.
-  document.getElementById("nextWordButton").disabled = true;
+  if (numTilesInDeck() == 0) {
+    // We ran out of tiles to hand out. Disable moving on to the next word.
+    toggleFinishButton(true);
+    document.getElementById("nextWordButton").disabled = false;
+  } else {
+    // 'Next Word' button is initially disabled. A valid word must be created in order to
+    // proceed to the next word.
+    document.getElementById("nextWordButton").disabled = true;
+  }
 }
 
 // Adds up the current board score to the total score and stops the play.
