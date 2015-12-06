@@ -94,7 +94,12 @@ scrabbleScore.refresh = function() {
 
   $("#score").css("color", "");
   $("#score").html(scrabbleScore.totalScore + " (+<span id='boardScore'>" + boardScore + "</span>)");
-  $("#boardScore").css("color", "#339933");
+  if (boardScore > 0) {
+    $("#boardScore").css("color", "#339933");
+  } else {
+    $("#boardScore").css("color", "red");
+  }
+
   $("#highestScore").html(scrabbleScore.highestScore);
 }
 
@@ -508,9 +513,11 @@ function validateWord() {
 
   if (errorCount) {
     document.getElementById("nextWordButton").disabled = true;
+    $("#word").css("color", "red");
     return false;
   }
 
+  $("#word").css("color", "#339933");
   document.getElementById("nextWordButton").disabled = false;
   return word;
 }
