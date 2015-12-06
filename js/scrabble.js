@@ -50,6 +50,67 @@ boardSlots[0][4] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/s
 boardSlots[0][5] = { "letterMultiplier": 1, "wordMultiplier": 2, "image": "img/scrabble/Scrabble_DoubleWordScore_81x87.jpg"};
 boardSlots[0][6] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
 
+// Globals to track current score.
+var scrabbleScore = { "totalScore": 0, "highestScore": 0 };
+
+// Calculates and returns the score for the tiles currently on the board.
+// Yes. This algorithm will need to change if we decide to implement multiple rows.
+scrabbleScore.calculateBoardScore = function() {
+  var iRow, iCol, letter, letterValue, wordMultiplier = 1, boardScore = 0;
+
+  if (!validateWord()) {
+    return 0;
+  }
+
+  // Add up all the letters' values. Count for letter modifiers on the way.
+  for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+    for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+      letter = boardSlots[iRow][iCol].letter;
+      if (letter) {
+        letterValue = scrabbleTiles[letter].value;
+        boardScore += letterValue * boardSlots[iRow][iCol].letterMultiplier;
+
+        // We're pre-multiplying all the word modifiers here.
+        wordMultiplier *= boardSlots[iRow][iCol].wordMultiplier;
+      }
+    }
+  }
+
+  // Now apply the word modifier.
+  boardScore *= wordMultiplier;
+
+  return boardScore;
+}
+
+// Updates the scoreboard texts based on the current tiles layout.
+scrabbleScore.refresh = function() {
+  var boardScore = scrabbleScore.calculateBoardScore();
+
+  $("#score").html(scrabbleScore.totalScore + " (+" + boardScore + ")");
+  $("#highestScore").html(scrabbleScore.highestScore);
+}
+
+// Updates the total score and the highest score variables based on the current tiles layout.
+// Also updates the scoreboard texts with the new total score and highest score (if total > highest).
+scrabbleScore.commit = function() {
+  var boardScore = scrabbleScore.calculateBoardScore();
+
+  scrabbleScore.totalScore += boardScore;
+  $("#score").html(scrabbleScore.totalScore);
+
+  if (scrabbleScore.totalScore > scrabbleScore.highestScore) {
+    scrabbleScore.highestScore = scrabbleScore.totalScore;
+    $("#highestScore").html(scrabbleScore.totalScore);
+    $("#highestScore").css("color", "#339933");
+  }
+}
+
+// Resets the score to 0 and updates the page as necessary.
+scrabbleScore.restart = function() {
+  scrabbleScore.totalScore = 0;
+  $("#score").html(0);
+  $("#highestScore").css("color", "");
+}
 
 // Hands out n random letter tiles from the deck adjusting the number-remaining properties for the scrabbleTiles.
 // If there are less remaining tiles than the requested, then returns all remaining tiles. Returns an empty array
@@ -86,7 +147,7 @@ function getFromDeck(n) {
   $("#remainingTiles").html(allTiles.length);
 
   if (!allTiles.length) {
-    // We ran out of tiles to hand out. Disable moving on to the next round.
+    // We ran out of tiles to hand out. Disable moving on to the next word.
     toggleFinishButton(true);
   }
 
@@ -95,7 +156,7 @@ function getFromDeck(n) {
 
 // Switches the appearance and functionality of the 'next-word' button. If 'toFinishButton' is true,
 // changes the button to 'finish' button. This may happen when we run out of tiles to hand out and
-// cannot proceed to the next round. Does the opposite if toFinishButton is false.
+// cannot proceed to the next word. Does the opposite if toFinishButton is false.
 function toggleFinishButton(toFinishButton) {
   var nextWordButton = document.getElementById("nextWordButton");
   if (toFinishButton) {
@@ -113,8 +174,21 @@ function toggleFinishButton(toFinishButton) {
 
 // Resets the board and tiles. Starts the first word.
 function restart() {
+  var iRow, iCol;
+
   // Clear the rack. (We're putting all tiles back to the deck.)
   $("#letterRack img").remove();
+
+  // Clear the board.
+  $("#board img").remove();
+
+  // Reset the slot data structure.
+  for (iRow = 0; iRow < Object.keys(boardSlots).length; ++iRow) {
+    for (iCol = 0; iCol < Object.keys(boardSlots[iRow]).length; ++iCol) {
+      delete boardSlots[iRow][iCol].tileId;
+      delete boardSlots[iRow][iCol].letter;
+    }
+  }
 
   // Reset the deck data structure.
   for (var key in scrabbleTiles) {
@@ -123,12 +197,12 @@ function restart() {
     }
   }
 
-  // Reset the score.
-  $("#score").html("");
-
-  // Activate the next-word button if it is not already activated.
+  // Activate the next-word button if it is not already activated. The button might have been
+  // disabled if we consumed all times in the previous round.
   toggleFinishButton(false);
   document.getElementById("nextWordButton").disabled = false;
+
+  scrabbleScore.restart();
 
   // Start the first word.
   nextWord();
@@ -137,6 +211,8 @@ function restart() {
 // Removes all tiles from the board and refills the hand with whatever number of new tiles needed.
 function nextWord() {
   var iRow, iCol, i, key, tileImageId, newTile, hand;
+
+  scrabbleScore.commit();
 
   // Remove all letter tiles on the board (Leave the ones on the rack).
   $("#board img").remove();
@@ -192,7 +268,7 @@ function nextWord() {
 // Adds up the current board score to the total score and stops the play.
 // The only action that can be taken after this is restarting the play from the beginning.
 function finish() {
-  console.log("finish()");
+  scrabbleScore.commit();
 
   // Disable next-word/finish button.
   document.getElementById("nextWordButton").disabled = true;
@@ -255,9 +331,13 @@ $.ajax({
   }
 });
 
-// Reads the letters on the board and returns them as a string.
+// Reads the letters on the board and checks if it is a valid Scrabble word.
+// Updates the page contents based on the validation result.
+// Returns
+// The word: if it is a valid word
+// false   : if it is not valid
 function validateWord() {
-  var iCol, columnLength, letter, word = "", ROW = 0;
+  var iCol, columnLength, letter, errorCount, word = "", ROW = 0;
 
   columnLength = Object.keys(boardSlots[ROW]).length;
 
@@ -278,27 +358,49 @@ function validateWord() {
 
   $("#word").html(word);
 
-  var rgxDisconnectedWord = new RegExp("[A-Z_]\xB7+[A-Z_]");
-  if (word == "" || rgxDisconnectedWord.test(word)) {
+  // Now let's check for any errors in the word. Update the page contents as we check each condition.
+  errorCount = 0;
+
+  // Check if we have anything on the board.
+  if (word == "") {
     checkSingleWord(false);
+    ++errorCount;
   } else {
-    checkSingleWord(true);
+    // Check if there is a gap between letters. Gap is not allowed.
+    var rgxDisconnectedWord = new RegExp("[A-Z_]\xB7+[A-Z_]");
+    if (rgxDisconnectedWord.test(word)) {
+      checkSingleWord(false);
+      ++errorCount;
+    } else {
+      checkSingleWord(true);
+    }
   }
+
+  // Check if the word has at least 2 letters. Words with one letter may show up in English dictinonaries
+  // but not allowed in Scrabble.
   if (word.length >= 2) {
     checkTwoLettersAndMore(true);
   } else {
     checkTwoLettersAndMore(false);
+    ++errorCount;
   }
+
+  // Check if the word shows up in our dictionary.
   if (isDictionaryWord(word)) {
     checkDictionary(true);
   } else {
     checkDictionary(false);
+    ++errorCount;
+  }
+
+  if (errorCount) {
+    return false;
   }
 
   return word;
 }
 
-// Make a jQuery object grayscale and semi-transparent.
+// Make a jQuery object grayscale and semi-transparent making it look like it's deactivated.
 // CSS source: http://blog.nmsdvid.com/css-filter-property/
 function grayscaleAndFade(jQueryObject, yes) {
   if (yes) {
@@ -322,6 +424,7 @@ function grayscaleAndFade(jQueryObject, yes) {
   }
 }
 
+// Following three functions toggle the check (v) icon next to each instruction message on or off.
 function checkTwoLettersAndMore(check) {
   if (check) {
     grayscaleAndFade($("#minLengthIcon"), false);
@@ -420,9 +523,14 @@ $(window).load(function() {
       boardSlots[row][col].letter = letter;
       boardSlots[row][col].tileId = tileId;
 
-      // Print the word we have so far.
+      // Validate and display the word we have so far.
       word = validateWord();
-      console.log("word: " + word);
+      if (word) {
+        console.log("word: " + word);
+      }
+
+      // Refresh the scoreboard.
+      scrabbleScore.refresh();
     }
   });
 
@@ -450,9 +558,14 @@ $(window).load(function() {
             delete boardSlots[iRow][iCol].tileId;
             delete boardSlots[iRow][iCol].letter;
 
-            // Print the word we have so far.
+            // Validate and display the word we have so far.
             word = validateWord();
-            console.log("word: " + word);
+            if (word) {
+              console.log("word: " + word);
+            }
+
+            // Refresh the scoreboard.
+            scrabbleScore.refresh();
 
             return;
           }

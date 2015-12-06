@@ -6,11 +6,11 @@ File Description: Styles for the elements specific to assignment 9 page.
 */
 
 
-#scoreBoard        { width: 600px; margin: 30px auto 10px auto; padding-bottom: 5px; border-bottom: 1px solid #339933; font-size: 14px; }
+#scoreBoard        { width: 650px; margin: 30px auto 10px auto; padding-bottom: 5px; border-bottom: 1px solid #339933; font-size: 14px; }
 #scoreBoard div    { display: inline-block; }
 #scoreBoard > div  { margin-right: 10px; }
 #scoreBoard > div > div:nth-child(2)  /* Values that follow the labels ...*/
-									 { width: 60px; font-weight: bold; }
+									 { width: 72px; font-weight: bold; }
 
 /* Make the board fixed width so the tiles stay in a single row when window is shrinked.*/
 #board             { margin-left: auto; margin-right: auto; margin-bottom: 20px; text-align: center; }
