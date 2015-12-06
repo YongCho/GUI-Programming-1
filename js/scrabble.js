@@ -7,8 +7,8 @@ File Description: JavaScript for assignment 9 page.
 
 "use strict";
 
-/* This array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp.
-I added "image" property to it. */
+// This array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp.
+// I added "image" property to it.
 var scrabbleTiles = [] ;
 scrabbleTiles["A"] = { "value" : 1,  "original-distribution" : 9,  "number-remaining" : 9, "image" : "img/scrabble/Scrabble_Tile_A.jpg"  } ;
 scrabbleTiles["B"] = { "value" : 3,  "original-distribution" : 2,  "number-remaining" : 2, "image" : "img/scrabble/Scrabble_Tile_B.jpg"  } ;
@@ -40,8 +40,9 @@ scrabbleTiles["_"] = { "value" : 0,  "original-distribution" : 2,  "number-remai
 
 var scrabbleBoard = {};
 
-/* Images are downloaded from
-https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/ImplementingScrabble-v01.jsp. */
+// Single row for now. Maybe upgrade to 2d board later.
+// Images are downloaded from
+// https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/ImplementingScrabble-v01.jsp.
 scrabbleBoard.slots = [];
 scrabbleBoard.slots[0] = [];
 scrabbleBoard.slots[0][0] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
@@ -52,7 +53,6 @@ scrabbleBoard.slots[0][4] = { "letterMultiplier": 1, "wordMultiplier": 1, "image
 scrabbleBoard.slots[0][5] = { "letterMultiplier": 1, "wordMultiplier": 2, "image": "img/scrabble/Scrabble_DoubleWordScore_81x87.jpg"};
 scrabbleBoard.slots[0][6] = { "letterMultiplier": 1, "wordMultiplier": 1, "image": "img/scrabble/Scrabble_BlankSquare_81x87.jpg"};
 
-// Single row for now. Maybe upgrade to 2d board later.
 scrabbleBoard.rowCount = Object.keys(scrabbleBoard.slots).length;
 scrabbleBoard.columnCount = Object.keys(scrabbleBoard.slots[0]).length;
 
