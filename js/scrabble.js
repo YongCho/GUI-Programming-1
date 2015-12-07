@@ -9,6 +9,9 @@ File Description: JavaScript for assignment 9 page.
 
 var Z_INDEX_DIALOG = 100;
 var Z_INDEX_TILE_ON_DRAG = 99;
+var TEXT_COLOR_ACTIVE = "#339933";
+var TEXT_COLOR_NORMAL = "";
+var TEXT_COLOR_INVALID = "red";
 
 // This array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp.
 // I added "image" property to it.
@@ -95,12 +98,12 @@ scrabbleScore.calculateBoardScore = function() {
 scrabbleScore.refresh = function() {
   var boardScore = scrabbleScore.calculateBoardScore();
 
-  $("#score").css("color", "");
+  $("#score").css("color", TEXT_COLOR_NORMAL);
   $("#score").html(scrabbleScore.totalScore + " (+<span id='boardScore'>" + boardScore + "</span>)");
   if (boardScore > 0) {
-    $("#boardScore").css("color", "#339933");
+    $("#boardScore").css("color", TEXT_COLOR_ACTIVE);
   } else {
-    $("#boardScore").css("color", "red");
+    $("#boardScore").css("color", TEXT_COLOR_INVALID);
   }
 
   $("#highestScore").html(scrabbleScore.highestScore);
@@ -114,13 +117,13 @@ scrabbleScore.commit = function() {
   scrabbleScore.totalScore += boardScore;
   $("#score").html(scrabbleScore.totalScore);
   if (scrabbleScore.totalScore > 0) {
-    $("#score").css("color", "#339933");
+    $("#score").css("color", TEXT_COLOR_ACTIVE);
   }
 
   if (scrabbleScore.totalScore > scrabbleScore.highestScore) {
     scrabbleScore.highestScore = scrabbleScore.totalScore;
     $("#highestScore").html(scrabbleScore.totalScore);
-    $("#highestScore").css("color", "#339933");
+    $("#highestScore").css("color", TEXT_COLOR_ACTIVE);
   }
 }
 
@@ -128,7 +131,7 @@ scrabbleScore.commit = function() {
 scrabbleScore.restart = function() {
   scrabbleScore.totalScore = 0;
   $("#score").html(0);
-  $("#highestScore").css("color", "");
+  $("#highestScore").css("color", TEXT_COLOR_NORMAL);
 }
 
 // Creates all DOM elements necessary to construct the board.
@@ -518,11 +521,11 @@ function validateWord() {
 
   if (errorCount) {
     document.getElementById("nextWordButton").disabled = true;
-    $("#word").css("color", "red");
+    $("#word").css("color", TEXT_COLOR_INVALID);
     return false;
   }
 
-  $("#word").css("color", "#339933");
+  $("#word").css("color", TEXT_COLOR_ACTIVE);
   document.getElementById("nextWordButton").disabled = false;
   return word;
 }
@@ -579,7 +582,7 @@ function checkDictionary(check) {
 // Opens up a dialog box asking for a letter for the blank tile. When the user picks the letter,
 // replaces the "letter" attribute of the blank tile draggable with the selected letter and then
 // does everything else that needs to be done when a tile is dropped on the board.
-// Argument: 
+// Argument:
 // blankTileDroppable: jQuery draggable blank tile object
 // tileId: DOM ID of the above droppable element
 // row, col: position on the board where the tile is dropped
@@ -665,14 +668,14 @@ $(window).load(function() {
 
       console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
-      // When a blank tile is first placed on the board, open up a dialog and let the user 
+      // When a blank tile is first placed on the board, open up a dialog and let the user
       // pick a letter for the blank tile. Otherwise move on.
       positionOnBoard = scrabbleBoard.findSlotFromTileId(tileId);
       if ($(ui.draggable).hasClass("blankTile") && !positionOnBoard) {
         // var newLetter = openBlankTileDialog();  // NOT POSSIBLE
-        // We cannot have this function return the new letter from the dialog because 
+        // We cannot have this function return the new letter from the dialog because
         // there is no way to make a blocking dialog. Everything that needs to happen
-        // after the user picks the letter for the blank tile must happen in some kind of 
+        // after the user picks the letter for the blank tile must happen in some kind of
         // callback functions supplied to the dialog.
         openBlankTileDialog($(ui.draggable), tileId, row, col);
       } else {
