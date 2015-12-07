@@ -30,6 +30,9 @@ File Description: Styles for the elements specific to assignment 9 page.
 .letterTileOnBoard { top: 3px; }
 .letterTileInDialog
 									 { width: 40px; height: 44px; margin: 1px; float: left; }
+.letterTileInDialog:hover {
+	cursor: pointer; box-shadow: 0px 0px 5px blue;
+}
 
 /* Highlight drop targets when dragging a tile and hovering over a specific board slot. */
 .dragHighlight     { box-shadow: 0px 0px 15px green; }
