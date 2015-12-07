@@ -70,18 +70,18 @@ Page Description: Assignment 9 archive
           </div>
           <div>
             <div class="label">Remaining Tiles:</div>
-            <div id="remainingTiles">100</div>
+            <div id="remainingTiles"></div>
           </div>
           <div>
             <div class="label">Highest Score:</div>
-            <div id="highestScore">&minus;<!-- Highest score achieved so far --></div>
+            <div id="highestScore">&minus;<!-- Highest score achieved so far throughout all rounds --></div>
           </div>
         </div>
 
-        <!-- Scrabble board container -->
+        <!-- Scrabble board container. Board html will be laid by script. -->
         <div id="board"></div>
 
-        <!-- List of conditions that the word must meet. JavaScript checks off each of them
+        <!-- List of conditions that the word must meet. JavaScript highlights the check (v) icon next to each of them
         as the user builds a word. -->
         <div id="instruction">
           <div>Create one word with no gap between letters.<img id="oneWordCheckIcon" src="img/checkIcon.png" class="instructionIcon" alt="Checked" /></div>
@@ -89,15 +89,13 @@ Page Description: Assignment 9 archive
           <div>The word must be found in the dictionary.<img id="dictionaryCheckIcon" src="img/checkIcon.png" class="instructionIcon" alt="Checked" /></div>
         </div>
 
-        <!-- Buttons -->
+        <!-- Control buttons -->
         <div class="buttonBox">
           <button id="nextWordButton" onclick="nextWord()">Next Word</button>
           <button id="restartButton" onclick="restart()">Start Over</button>
         </div>
 
-        <!-- Letters rack. Letter images are downloaded from
-        https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Tiles.html.
-        The rack is initially empty. Random letters are to be displayed by JavaScript when the page loads. -->
+        <!-- Rack containing the 7 tiles. The tiles will be placed by script. -->
         <div id="letterRack"></div>
 
       </article>
