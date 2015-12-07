@@ -7,6 +7,9 @@ File Description: JavaScript for assignment 9 page.
 
 "use strict";
 
+var Z_INDEX_DIALOG = 100;
+var Z_INDEX_TILE_ON_DRAG = 99;
+
 // This array is copied from https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-lecs/lecture26.jsp.
 // I added "image" property to it.
 var scrabbleTiles = [] ;
@@ -181,9 +184,8 @@ scrabbleBoard.isSlotEmpty = function(row, col) {
 
 // Updates the board slot data structure so that the slot at [row][col] contains
 // the given tile id.
-scrabbleBoard.addToSlot = function(tileId, row, col) {
+scrabbleBoard.addToSlot = function(tileId, letter, row, col) {
   var iRow, iCol;
-  var letter = $("#" + tileId).attr("letter");
 
   // If the tile came from another slot, clear that slot.
   for (iRow = 0; iRow < scrabbleBoard.rowCount; ++iRow) {
@@ -351,6 +353,9 @@ function nextWord() {
     key = hand[i];
     tileImageId = generateTileId();
     newTile = $("<img id=\"" + tileImageId + "\" src=\"" + scrabbleTiles[key]["image"] + "\" class=\"letterTile\" letter=\"" + key + "\" />");
+    if (key == "_") {
+      newTile.addClass("blankTile");
+    }
     // Add tile image.
     $("#letterRack").append(newTile);
 
@@ -363,7 +368,7 @@ function nextWord() {
       revertDuration: 200,  // msec
       start: function(event, ui) {
         // Tile should be on top of everything else when being dragged.
-        $(this).css("z-index", "100");
+        $(this).css("z-index", Z_INDEX_TILE_ON_DRAG);
 
         // Revert option needs to be manually reset because it gets modified by droppables
         // to force reverting after dropping has occured.
@@ -571,6 +576,49 @@ function checkDictionary(check) {
   }
 }
 
+// Opens up a dialog box asking for a letter for the blank tile. When the user picks the letter,
+// replaces the "letter" attribute of the blank tile draggable with the selected letter and then
+// does everything else that needs to be done when a tile is dropped on the board.
+// Argument: 
+// blankTileDroppable: jQuery draggable blank tile object
+// tileId: DOM ID of the above droppable element
+// row, col: position on the board where the tile is dropped
+function openBlankTileDialog(blankTileDraggable, tileId, row, col) {
+  var tileSelectorDialog = $("<div id='blankTileDialog'></div>");
+  var letterKey, newTile;
+  for (letterKey in scrabbleTiles) {
+    if (letterKey != "_") {
+      newTile = $("<img src='" + scrabbleTiles[letterKey]["image"] + "' class='letterTileInDialog' letter='" + letterKey + "'>");
+      newTile.click(function() {
+        var newLetter = $(this).attr("letter");
+
+        // Replace the letter attribute and the image source of the draggable tile img.
+        blankTileDraggable.attr("letter", newLetter);
+        blankTileDraggable.attr("src", scrabbleTiles[newLetter]["image"]);
+
+        // Update the board data structure.
+        tileId = blankTileDraggable.attr("id");
+        scrabbleBoard.addToSlot(tileId, newLetter, row, col);
+
+        // Validate and display the word we have so far.
+        validateWord();
+
+        // Refresh the scoreboard.
+        scrabbleScore.refresh();
+
+        tileSelectorDialog.dialog("close");
+      });
+      tileSelectorDialog.append(newTile);
+    }
+  }
+  tileSelectorDialog.css("z-index", Z_INDEX_DIALOG);
+  tileSelectorDialog.dialog({
+    modal: true,
+    draggable: false,
+    resizable: false
+  });
+}
+
 $(window).load(function() {
   var row, col;
 
@@ -599,7 +647,7 @@ $(window).load(function() {
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
     drop: function(event, ui) {
-      var row, col, letter, word, tileId;
+      var row, col, letter, word, tileId, positionOnBoard;
 
       ui.draggable.removeClass("letterTileOnRack");
       ui.draggable.addClass("letterTileOnBoard");
@@ -617,16 +665,23 @@ $(window).load(function() {
 
       console.log("Dropped " + letter + " (" + tileId + ") on (" + row + ", " + col + ").");
 
-      scrabbleBoard.addToSlot(tileId, row, col);
-
-      // Validate and display the word we have so far.
-      word = validateWord();
-      if (word) {
-        console.log("word: " + word);
+      // When a blank tile is first placed on the board, open up a dialog and let the user 
+      // pick a letter for the blank tile. Otherwise move on.
+      positionOnBoard = scrabbleBoard.findSlotFromTileId(tileId);
+      if ($(ui.draggable).hasClass("blankTile") && !positionOnBoard) {
+        // var newLetter = openBlankTileDialog();  // NOT POSSIBLE
+        // We cannot have this function return the new letter from the dialog because 
+        // there is no way to make a blocking dialog. Everything that needs to happen
+        // after the user picks the letter for the blank tile must happen in some kind of 
+        // callback functions supplied to the dialog.
+        openBlankTileDialog($(ui.draggable), tileId, row, col);
+      } else {
+        scrabbleBoard.addToSlot(tileId, letter, row, col);
+        // Validate and display the word we have so far.
+        validateWord();
+        // Refresh the scoreboard.
+        scrabbleScore.refresh();
       }
-
-      // Refresh the scoreboard.
-      scrabbleScore.refresh();
     }
   });
 
@@ -639,6 +694,12 @@ $(window).load(function() {
 
       ui.draggable.removeClass("letterTileOnBoard");
       ui.draggable.addClass("letterTileOnRack");
+
+      // When a blank tile comes back on to the rack, change its image back to the
+      // blank tile image.
+      if ($(ui.draggable).hasClass("blankTile")) {
+        $(ui.draggable).attr("src", scrabbleTiles["_"]["image"]);
+      }
 
       tileId = ui.draggable.attr("id");
       pos = scrabbleBoard.findSlotFromTileId(tileId);
