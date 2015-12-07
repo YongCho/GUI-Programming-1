@@ -135,7 +135,7 @@ scrabbleScore.restart = function() {
 }
 
 // Creates all DOM elements necessary to construct the board.
-scrabbleBoard.createBoard = function() {
+scrabbleBoard.createBoardHtml = function() {
   var row, col, bgImagePath, newSlot;
   var BG_IMAGE_WIDTH = 81, BG_IMAGE_HEIGHT = 87, SLOT_MARGIN = 1, SLOT_BORDER_WIDTH = 1;
 
@@ -242,11 +242,10 @@ scrabbleBoard.printBoard = function() {
 // For convenience.
 var printBoard = scrabbleBoard.printBoard;
 
-// Hands out n random letter tiles from the deck adjusting the number-remaining properties for the scrabbleTiles.
-// Returns the hand as an array of letters.
-// If there are less remaining tiles than the requested, then returns all remaining tiles. Returns an empty array
-// when no tiles are remaining in deck.
-// ex) ["A", "K", "Z", ...]
+// Removes n random letter tiles from the deck adjusting the number-remaining properties for the scrabbleTiles.
+// Returns the selected letters as an array of strings. (["A", "K", "Z", ...])
+// If there are not enough tiles in the deck to meet the request, then returns all remaining tiles.
+// If the deck is already empty, returns an empty array.
 function getFromDeck(n) {
   var hand = [];
   var allTiles = [];
@@ -273,7 +272,7 @@ function getFromDeck(n) {
     }
   }
 
-  // Display number of remaining tiles on the scoreboard.
+  // Update the number of remaining tiles on the page.
   $("#remainingTiles").html(allTiles.length);
 
   return hand;
@@ -297,9 +296,9 @@ function numTilesOnRack() {
   return $("#letterRack img").length;
 }
 
-// Switches the appearance and functionality of the 'next-word' button. If 'toFinishButton' is true,
+// Toggles the appearance and functionality of the 'next-word' button. If the argument is true,
 // changes the button to 'finish' button. This may happen when we run out of tiles to hand out and
-// cannot proceed to the next word. Does the opposite if toFinishButton is false.
+// cannot proceed to the next word. Does the opposite if the argument is false.
 function toggleFinishButton(toFinishButton) {
   var nextWordButton = document.getElementById("nextWordButton");
   if (toFinishButton) {
@@ -315,7 +314,7 @@ function toggleFinishButton(toFinishButton) {
   }
 }
 
-// Resets the board and tiles. Starts the first word.
+// Resets the board and tiles. Starts the first word with a fresh score.
 function restart() {
   // Clear the rack. (We're putting all tiles back to the deck.)
   $("#letterRack img").remove();
@@ -330,10 +329,9 @@ function restart() {
     }
   }
 
-  // Activate the next-word button if it is not already activated. The button might have been
-  // disabled if we consumed all times in the previous round.
+  // If we had consumed all tiles in the previous round, 'finish' button would be up.
+  // We need 'next-word' button instead now as we're starting a fresh round.
   toggleFinishButton(false);
-  document.getElementById("nextWordButton").disabled = false;
 
   scrabbleScore.restart();
 
@@ -341,7 +339,8 @@ function restart() {
   nextWord();
 }
 
-// Removes all tiles from the board and refills the hand with whatever number of new tiles needed.
+// Adds up the score. Removes all tiles from the board and adds to the rack whatever number of
+// new tiles needed.
 function nextWord() {
   var i, key, tileImageId, newTile, hand;
 
@@ -362,8 +361,8 @@ function nextWord() {
     // Add tile image.
     $("#letterRack").append(newTile);
 
-    // Apply CSS condition for the tile being on the rack. This may do minor position adjustment
-    // to the tile image in order to make it sit naturally on the rack background image.
+    // Apply CSS condition for the tile being on the rack. Apply CSS rule to this class to do minor position
+    // adjustment to the tile image in order to make it sit naturally on the rack background image.
     newTile.addClass("letterTileOnRack");
 
     // Make the tile draggable.
@@ -373,12 +372,12 @@ function nextWord() {
         // Tile should be on top of everything else when being dragged.
         $(this).css("z-index", Z_INDEX_TILE_ON_DRAG);
 
-        // Revert option needs to be manually reset because it gets modified by droppables
+        // Revert option needs to be manually reset because it may be modified by droppables
         // to force reverting after dropping has occured.
         $(this).draggable("option", "revert", "invalid");
       },
       stop: function() {
-        // Once finished dragging, reset the z-index.
+        // Once finished dragging, revert the z-index.
         $(this).css("z-index", "");
       }
     });
@@ -387,31 +386,33 @@ function nextWord() {
   // Clear the current word display.
   $("#word").html("");
 
-  // Clear the check marks on the instruction.
+  // Clear the check marks next to the instruction texts as nothing has been played yet.
   checkSingleWord(false);
   checkTwoLettersAndMore(false);
   checkDictionary(false);
 
   if (numTilesInDeck() == 0) {
-    // We ran out of tiles to hand out. Disable moving on to the next word.
+    // We ran out of tiles to hand out. Disable moving on to the next word by switching 'next-word'
+    // button to 'finish' button.
     toggleFinishButton(true);
     document.getElementById("nextWordButton").disabled = false;
   } else {
-    // 'Next Word' button is initially disabled. A valid word must be created in order to
+    // Disable 'next Word' button initially. A valid word must be created in order to
     // proceed to the next word.
     document.getElementById("nextWordButton").disabled = true;
   }
 }
 
 // Adds up the current board score to the total score and stops the play.
-// The only action that can be taken after this is restarting the play from the beginning.
+// The only action that can be taken after this point is restarting the play from the beginning.
 function finish() {
   scrabbleScore.commit();
 
+  // Once you finish, it doesn't make sense to finish again.
   // Disable next-word/finish button.
   document.getElementById("nextWordButton").disabled = true;
 
-  // Also disable all draggables.
+  // Also prevent all tiles from being dragged any more.
   $(".letterTile").draggable("disable");
 }
 
@@ -451,7 +452,8 @@ $.ajax({
     var words = result.split("\n");
 
     // Add them as properties to the dictionary lookup object.
-    // This will allow for fast lookups later. All words are converted to capital letters.
+    // This will allow for fast lookups later. All words are converted to capital letters
+    // to make things simple since Scrabble is case insensitive.
     for (var i = 0; i < words.length; ++i) {
       isDictionaryWord.dict[words[i].toUpperCase()] = true;
     }
@@ -460,14 +462,15 @@ $.ajax({
 
 // Reads the letters on the board and checks if it is a valid Scrabble word.
 // Updates the page contents based on the validation result.
+// This function assumes we only have one horizontal line on the board. It needs to be
+// changed if we're going to upgrade to 2D board.
 // Returns
 // The word: for a valid word
-// false   : for in invalid word
+// false   : for an invalid word
 function validateWord() {
   var iCol, letter, errorCount, word = "", ROW = 0;
 
-
-  // Read each letter and append them to word.
+  // Read each letter from the board and append them to word string.
   for (iCol = 0; iCol < scrabbleBoard.columnCount; ++iCol) {
     letter = scrabbleBoard.getLetterFromSlot(ROW, iCol);
     if (typeof(letter) === "undefined") {
@@ -492,7 +495,7 @@ function validateWord() {
     checkSingleWord(false);
     ++errorCount;
   } else {
-    // Check if there is a gap between letters. Gap is not allowed.
+    // Check if there is a gap within letters. Gap is not allowed.
     var rgxDisconnectedWord = new RegExp("[A-Z_]\xB7+[A-Z_]");
     if (rgxDisconnectedWord.test(word)) {
       checkSingleWord(false);
@@ -502,8 +505,8 @@ function validateWord() {
     }
   }
 
-  // Check if the word has at least 2 letters. Words with one letter may show up in English dictinonaries
-  // but not allowed in Scrabble.
+  // Check if the word has at least 2 letters. Words with one letter may show up in an English dictinonary
+  // but are not allowed in Scrabble.
   if (word.length >= 2) {
     checkTwoLettersAndMore(true);
   } else {
@@ -530,7 +533,7 @@ function validateWord() {
   return word;
 }
 
-// Make a jQuery object grayscale and semi-transparent making it look like it's deactivated.
+// Make a jQuery object grayscale and semi-transparent making it look like it's 'deactivated'.
 // CSS source: http://blog.nmsdvid.com/css-filter-property/
 function grayscaleAndFade(jQueryObject, yes) {
   if (yes) {
@@ -579,11 +582,11 @@ function checkDictionary(check) {
   }
 }
 
-// Opens up a dialog box asking for a letter for the blank tile. When the user picks the letter,
+// Opens up a dialog box asking to pick a letter for the blank tile played. When the user picks the letter,
 // replaces the "letter" attribute of the blank tile draggable with the selected letter and then
-// does everything else that needs to be done when a tile is dropped on the board.
+// does everything else that needs to be done when a tile draggable is dropped on the board.
 // Argument:
-// blankTileDroppable: jQuery draggable blank tile object
+// blankTileDroppable: jQuery draggable blank tile object that was just dropped
 // tileId: DOM ID of the above droppable element
 // row, col: position on the board where the tile is dropped
 function openBlankTileDialog(blankTileDraggable, tileId, row, col) {
@@ -591,7 +594,11 @@ function openBlankTileDialog(blankTileDraggable, tileId, row, col) {
   var letterKey, newTile;
   for (letterKey in scrabbleTiles) {
     if (letterKey != "_") {
+      // Add each tile image into the dialog so the user can click it to select the letter.
       newTile = $("<img src='" + scrabbleTiles[letterKey]["image"] + "' class='letterTileInDialog' letter='" + letterKey + "'>");
+
+      // Register click event to the image. This callback must make sure everything gets processed
+      // with the selected letter as if it was played normally.
       newTile.click(function() {
         var newLetter = $(this).attr("letter");
 
@@ -606,7 +613,7 @@ function openBlankTileDialog(blankTileDraggable, tileId, row, col) {
         // Validate and display the word we have so far.
         validateWord();
 
-        // Refresh the scoreboard.
+        // Update the score with the selected letter.
         scrabbleScore.refresh();
 
         tileSelectorDialog.dialog("close");
@@ -622,14 +629,16 @@ function openBlankTileDialog(blankTileDraggable, tileId, row, col) {
   });
 }
 
+
 $(window).load(function() {
   var row, col;
 
-  scrabbleBoard.createBoard();
+  scrabbleBoard.createBoardHtml();
 
   // Make the board slots droppable.
   $(".boardSlot").droppable({
-    // This function determines which slots get highlighted when dragging a tile.
+    // This function determines whether the slot gets highlighted as an acceptable dropping zone
+    // when a tile is being dragged.
     accept: function(draggable) {
       var row, col;
 
@@ -650,7 +659,7 @@ $(window).load(function() {
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
     drop: function(event, ui) {
-      var row, col, letter, word, tileId, positionOnBoard;
+      var row, col, letter, word, tileId, previousPositionOnBoard;
 
       ui.draggable.removeClass("letterTileOnRack");
       ui.draggable.addClass("letterTileOnBoard");
@@ -662,6 +671,7 @@ $(window).load(function() {
       tileId = ui.draggable.attr("id");
 
       // Make the dropped tile snap to the board image.
+      // TODO: I think there is a built-in jQuery UI way of doing this.
       $(ui.draggable).css("top", "");
       $(ui.draggable).css("left", "");
       $(this).append(ui.draggable);
@@ -670,25 +680,26 @@ $(window).load(function() {
 
       // When a blank tile is first placed on the board, open up a dialog and let the user
       // pick a letter for the blank tile. Otherwise move on.
-      positionOnBoard = scrabbleBoard.findSlotFromTileId(tileId);
-      if ($(ui.draggable).hasClass("blankTile") && !positionOnBoard) {
+      previousPositionOnBoard = scrabbleBoard.findSlotFromTileId(tileId);
+      if ($(ui.draggable).hasClass("blankTile") && !previousPositionOnBoard) {
         // var newLetter = openBlankTileDialog();  // NOT POSSIBLE
-        // We cannot have this function return the new letter from the dialog because
+        // We cannot have this function return the new letter selected from the dialog because
         // there is no way to make a blocking dialog. Everything that needs to happen
         // after the user picks the letter for the blank tile must happen in some kind of
-        // callback functions supplied to the dialog.
+        // callback function supplied to the dialog.
         openBlankTileDialog($(ui.draggable), tileId, row, col);
       } else {
         scrabbleBoard.addToSlot(tileId, letter, row, col);
         // Validate and display the word we have so far.
         validateWord();
-        // Refresh the scoreboard.
+
+        // Calculate the score and update the page.
         scrabbleScore.refresh();
       }
     }
   });
 
-  // Make the rack droppable so the tiles can be dropped in it.
+  // Make the rack droppable so the tiles can be moved from the board to the rack.
   $("#letterRack").droppable({
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
@@ -710,17 +721,14 @@ $(window).load(function() {
         // The tile came from the board. Mark it off the board data structure.
         scrabbleBoard.deleteFromSlot(pos[0], pos[1]);  // pos[0]: row, pos[1]: column
 
-        // Place the tile on the rack.
+        // Snap the tile image to the back of the rack.
         $("#letterRack").append(ui.draggable);
         ui.draggable.css({"position": "relative", "top": "", "left": ""});
 
         // Validate and display the word we have so far.
         word = validateWord();
-        if (word) {
-          console.log("word: " + word);
-        }
 
-        // Refresh the scoreboard.
+        // Calculate the score and update the page.
         scrabbleScore.refresh();
       } else {
         // User grabbed the tile and put it right back on the rack. Use the revert function
@@ -730,6 +738,6 @@ $(window).load(function() {
     }
   });
 
-  // Reset the board and tiles. Start the first word.
+  // Set the board and tiles. Start the first word.
   restart();
 });
