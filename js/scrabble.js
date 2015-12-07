@@ -703,6 +703,7 @@ $(window).load(function() {
   $("#letterRack").droppable({
     activeClass: "dragHighlight",
     hoverClass: "hoverHighlight",
+    tolerance: "touch",
     drop: function(event, ui) {
       var tileId, word, pos;
 
